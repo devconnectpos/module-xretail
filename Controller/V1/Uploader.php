@@ -96,7 +96,7 @@ class Uploader extends Action {
                             ->setHttpResponseCode(200);
         } else {
             $fileName = $this->uploadFileAndGetName();
-            $fileName = $this->objectManager->get('Magento\Store\Model\StoreManagerInterface')
+            $fileName = $this->_objectManager->get('Magento\Store\Model\StoreManagerInterface')
                                              ->getStore()
                                              ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA) . 'images/' . $fileName;
 

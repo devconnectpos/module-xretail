@@ -67,6 +67,9 @@ class UpgradeSchema implements UpgradeSchemaInterface {
             $this->addMediaLibrary($setup);
             $this->addAdvertisement($setup);
         }
+        if (version_compare($context->getVersion(), '0.3.6', '<')) {
+            $this->modifyOutletColumn($setup);
+        }
     }
 
     /**
@@ -805,7 +808,8 @@ class UpgradeSchema implements UpgradeSchemaInterface {
             $installer->getTable('sm_xretail_outlet'),
             'lat',
             [
-                'type' => Table::TYPE_FLOAT,
+                'type' => Table::TYPE_TEXT,
+                'length' => 255000,
                 'nullable' => false,
                 'comment' => 'Latitude Google Map'
             ]
@@ -815,7 +819,8 @@ class UpgradeSchema implements UpgradeSchemaInterface {
             $installer->getTable('sm_xretail_outlet'),
             'lng',
             [
-                'type' => Table::TYPE_FLOAT,
+                'type' => Table::TYPE_TEXT,
+                'length' => 255000,
                 'nullable' => false,
                 'comment' => 'Longitude Google Map'
             ]
@@ -980,6 +985,39 @@ class UpgradeSchema implements UpgradeSchemaInterface {
             'Is Active'
         );
         $installer->getConnection()->createTable($table);
+
+        $installer->endSetup();
+    }
+
+    protected function modifyOutletColumn(SchemaSetupInterface $setup) {
+        $installer = $setup;
+        $installer->startSetup();
+
+        $installer
+            ->getConnection()
+            ->modifyColumn(
+                $installer->getTable('sm_xretail_outlet'),
+                'lat',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255000,
+                    'nullable' => false,
+                    'comment'  => 'Latitude Google Map'
+                ]
+            );
+
+        $installer
+            ->getConnection()
+            ->modifyColumn(
+                $installer->getTable('sm_xretail_outlet'),
+                'lng',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255000,
+                    'nullable' => false,
+                    'comment'  => 'Longitude Google Map'
+                ]
+            );
 
         $installer->endSetup();
     }

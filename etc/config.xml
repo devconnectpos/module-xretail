@@ -244,11 +244,11 @@
                     <service>SM\Wishlist\Repositories\WishlistManagement</service>
                     <function>add</function>
                 </wishlist>
-                <wishlist>
-                    <method>Delete</method>
+                <delete-wishlist>
+                    <method>Post</method>
                     <service>SM\Wishlist\Repositories\WishlistManagement</service>
                     <function>remove</function>
-                </wishlist>
+                </delete-wishlist>
                 <!--Client order count-->
                 <user-order-count>
                     <method>Get</method>
@@ -460,6 +460,17 @@
                     <service>SM\Sales\Repositories\OrderManagement</service>
                     <function>calculateShippingRates</function>
                 </shipping-rates>
+
+                <eway-transaction>
+                    <method>Post</method>
+                    <service>SM\Eway\Repositories\EwayIntegrationManagement</service>
+                    <function>doTransaction</function>
+                </eway-transaction>
+                <eway-refund>
+                    <method>Post</method>
+                    <service>SM\Eway\Repositories\EwayIntegrationManagement</service>
+                    <function>doRefund</function>
+                </eway-refund>
             </router>
         </apirouters>
     </default>
