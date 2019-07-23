@@ -39,7 +39,6 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         }
         if (version_compare($context->getVersion(), '0.1.6', '<')) {
             $this->addReceiptTable($setup);
-            $this->dummyReceipt($setup);
         }
         if (version_compare($context->getVersion(), '0.1.7', '<')) {
             $this->dummyReceipt($setup);
