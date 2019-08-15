@@ -295,4 +295,17 @@ class Data extends AbstractHelper
 
         return "\t" . implode("\n\t", $result);
     }
+
+    /**
+     * @param $time
+     * @param $storeId
+     * @return false|string
+     * @throws \Exception
+     */
+    public function convertTimeDBUsingTimeZoneToUTC($time, $storeId)
+    {
+        $timeObject = new \DateTime($time, new \DateTimeZone($this->getTimezoneForStore($storeId)));
+        $timeObject = $timeObject->format('U');
+        return $timeObject = date("Y-m-d H:i:s",$timeObject);
+    }
 }

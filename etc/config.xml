@@ -154,6 +154,13 @@
                     <function>rateOrder</function>
                 </rate-order>
 
+                <!-- update print time counter -->
+                <save-print-time>
+                    <method>Post</method>
+                    <service>SM\Sales\Repositories\OrderManagement</service>
+                    <function>updatePrintTime</function>
+                </save-print-time>
+
                 <invoice>
                     <method>Post</method>
                     <service>SM\Sales\Repositories\ShipmentManagement</service>
@@ -471,6 +478,51 @@
                     <service>SM\Eway\Repositories\EwayIntegrationManagement</service>
                     <function>doRefund</function>
                 </eway-refund>
+
+                <!--3rd Payment Express-->
+                <payment-express-init-transaction>
+                    <method>Post</method>
+                    <service>SM\PaymentExpress\Repositories\PaymentExpressManagement</service>
+                    <function>initTransaction</function>
+                </payment-express-init-transaction>
+                <payment-express-status>
+                    <method>Post</method>
+                    <service>SM\PaymentExpress\Repositories\PaymentExpressManagement</service>
+                    <function>checkStatus</function>
+                </payment-express-status>
+                <payment-express-button>
+                    <method>Post</method>
+                    <service>SM\PaymentExpress\Repositories\PaymentExpressManagement</service>
+                    <function>doButton</function>
+                </payment-express-button>
+                <payment-express-refund>
+                    <method>Post</method>
+                    <service>SM\PaymentExpress\Repositories\PaymentExpressManagement</service>
+                    <function>doRefund</function>
+                </payment-express-refund>
+                <save-payment-express-history>
+                    <method>Post</method>
+                    <service>SM\PaymentExpress\Repositories\PaymentExpressManagement</service>
+                    <function>savePaymentExpressHistory</function>
+                </save-payment-express-history>
+                <payment-express-history>
+                    <method>Get</method>
+                    <service>SM\PaymentExpress\Repositories\PaymentExpressManagement</service>
+                    <function>getListPaymentExpressHistory</function>
+                </payment-express-history>
+                <!-- END 3rd Payment Express-->
+
+                <!--Electronic Journal-->
+                <electronic-journal>
+                    <method>Post</method>
+                    <service>SM\ElectronicJournal\Repositories\ElectronicJournalManagement</service>
+                    <function>save</function>
+                </electronic-journal>
+                <electronic-journal>
+                    <method>Get</method>
+                    <service>SM\ElectronicJournal\Repositories\ElectronicJournalManagement</service>
+                    <function>getElectronicJournalData</function>
+                </electronic-journal>
             </router>
         </apirouters>
     </default>
