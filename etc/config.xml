@@ -473,6 +473,7 @@
                     <service>SM\Eway\Repositories\EwayIntegrationManagement</service>
                     <function>doTransaction</function>
                 </eway-transaction>
+
                 <eway-refund>
                     <method>Post</method>
                     <service>SM\Eway\Repositories\EwayIntegrationManagement</service>
@@ -518,12 +519,27 @@
                     <service>SM\ElectronicJournal\Repositories\ElectronicJournalManagement</service>
                     <function>save</function>
                 </electronic-journal>
+
                 <electronic-journal>
                     <method>Get</method>
                     <service>SM\ElectronicJournal\Repositories\ElectronicJournalManagement</service>
                     <function>getElectronicJournalData</function>
                 </electronic-journal>
+                <!-- end Electronic Journal-->
+
+                <refund-without-receipts>
+                    <method>Post</method>
+                    <service>SM\RefundWithoutReceipt\Repositories\RefundWithoutReceiptManagement</service>
+                    <function>saveTransaction</function>
+                </refund-without-receipts>
             </router>
         </apirouters>
+        <xretail>
+            <pos>
+                <custom_sale_tax_class>0</custom_sale_tax_class>
+                <sync_when_cart_changes>0</sync_when_cart_changes>
+                <integrate_freegift>none</integrate_freegift>
+            </pos>
+        </xretail>
     </default>
 </config>
