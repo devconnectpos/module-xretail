@@ -60,7 +60,7 @@ class Data extends AbstractHelper
     /**
      * @var string
      */
-    public static $API_VERSION = '19.08.27';
+    public static $API_VERSION = '19.09.06';
 
     /**
      * Data constructor.
