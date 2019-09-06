@@ -15,7 +15,9 @@ use SM\XRetail\Model\Api\Configuration;
  *
  * @package SM\XRetail\Controller\V1
  */
-class Xretail extends ApiAbstract {
+class Xretail extends ApiAbstract
+{
+
     /**
      * @var \SM\XRetail\Auth\Authenticate
      */
@@ -36,8 +38,7 @@ class Xretail extends ApiAbstract {
         Configuration $configuration,
         Config $config,
         Authenticate $authenticate
-    )
-    {
+    ) {
         parent::__construct($context, $scopeConfig, $configuration, $config);
         $this->authenticate = $authenticate;
     }
@@ -49,7 +50,7 @@ class Xretail extends ApiAbstract {
     {
         try {
             // authenticate
-            $this->authenticate->authenticate($this);
+            //$this->authenticate->authenticate($this);
 
             // communicate with api before
             $this->dispatchEvent('rest_api_before', ['apiController' => $this]);
