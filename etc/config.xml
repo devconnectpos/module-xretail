@@ -12,6 +12,32 @@
                 <php_run_time>php</php_run_time>
             </advance>
         </xpos>
+        <pwa>
+            <brand_name>
+                <pwa_brand_active>Connectpos</pwa_brand_active>
+            </brand_name>
+        </pwa>
+        <pwa>
+            <banner>
+                <pwa_banner_active>5</pwa_banner_active>
+            </banner>
+        </pwa>
+        <pwa>
+            <integrate>
+                <pwa_integrate_reward_points>no</pwa_integrate_reward_points>
+                <pwa_integrate_gift_card>no</pwa_integrate_gift_card>
+            </integrate>
+        </pwa>
+        <pwa>
+            <color_picker>
+                <pwa_theme_color>#2db9b0</pwa_theme_color>
+            </color_picker>
+        </pwa>
+        <pwa>
+            <product_category>
+                <pwa_show_product_visibility>1,2,3,4</pwa_show_product_visibility>
+            </product_category>
+        </pwa>
         <apirouters>
             <router>
                 <!--Product-->
@@ -25,6 +51,12 @@
                     <service>SM\Product\Repositories\ProductManagement</service>
                     <function>getProductData</function>
                 </product>
+                <pwa_product>
+                    <method>Get</method>
+                    <service>SM\Product\Repositories\ProductManagement</service>
+                    <function>getPWAProductData</function>
+                </pwa_product>
+
                 <xcategory>
                     <method>Get</method>
                     <service>SM\Category\Repositories\CategoryManagement</service>
@@ -245,17 +277,27 @@
                     <service>SM\XRetail\Repositories\OutletManagement</service>
                     <function>deleteRegister</function>
                 </register>
-                <!--Wishlist-->
+                <!--Wish List PWA-->
                 <wishlist>
                     <method>Post</method>
                     <service>SM\Wishlist\Repositories\WishlistManagement</service>
                     <function>add</function>
                 </wishlist>
+                <wishlist>
+                    <method>Delete</method>
+                    <service>SM\Wishlist\Repositories\WishlistManagement</service>
+                    <function>remove</function>
+                </wishlist>
+                <!--end Wish List PWA-->
+
+                <!-- Wish List CPOS -->
                 <delete-wishlist>
                     <method>Post</method>
                     <service>SM\Wishlist\Repositories\WishlistManagement</service>
-                    <function>remove</function>
+                    <function>removeItemFromCposWishList</function>
                 </delete-wishlist>
+                <!-- End Wish List CPOS -->
+
                 <!--Client order count-->
                 <user-order-count>
                     <method>Get</method>
@@ -532,6 +574,71 @@
                     <service>SM\RefundWithoutReceipt\Repositories\RefundWithoutReceiptManagement</service>
                     <function>saveTransaction</function>
                 </refund-without-receipts>
+                <debug>
+                    <method>Post</method>
+                    <service>SM\XRetail\Repositories\DebugManagement</service>
+                    <function>debug</function>
+                </debug>
+
+                <!--PWA router API-->
+                <guest_customer>
+                    <method>Get</method>
+                    <service>SM\PWA\Repositories\UserManagement</service>
+                    <function>getRetailGuestCustomer</function>
+                </guest_customer>
+                <check_login>
+                    <method>Post</method>
+                    <service>SM\PWA\Repositories\UserManagement</service>
+                    <function>LoginToPWA</function>
+                </check_login>
+
+                <pwa_keyword>
+                    <method>Get</method>
+                    <service>SM\PWAKeyword\Repositories\PWAKeywordManagement</service>
+                    <function>getKeywordData</function>
+                </pwa_keyword>
+
+                <pwa_banner>
+                    <method>Get</method>
+                    <service>SM\PWABanner\Repositories\PWABannerManagement</service>
+                    <function>getBannerData</function>
+                </pwa_banner>
+
+                <pwa_order>
+                    <method>Get</method>
+                    <service>SM\PWA\Repositories\OrderManagement</service>
+                    <function>getOrderPWA</function>
+                </pwa_order>
+
+                <pwa-create-customer>
+                    <method>Post</method>
+                    <service>SM\PWA\Repositories\UserManagement</service>
+                    <function>createCustomerAccountViaPWA</function>
+                </pwa-create-customer>
+
+                <pwa-reset-password>
+                    <method>Post</method>
+                    <service>SM\PWA\Repositories\UserManagement</service>
+                    <function>resetPasswordViaPWA</function>
+                </pwa-reset-password>
+
+                <pwa-save-customer>
+                    <method>Post</method>
+                    <service>SM\PWA\Repositories\UserManagement</service>
+                    <function>saveCustomerDetails</function>
+                </pwa-save-customer>
+
+                <pwa-change-password>
+                    <method>Post</method>
+                    <service>SM\PWA\Repositories\UserManagement</service>
+                    <function>changeCustomerPassword</function>
+                </pwa-change-password>
+
+                <pwa_config_gcrp>
+                    <method>Get</method>
+                    <service>SM\PWAQrCode\Repositories\AheadworksIntegrateManagement</service>
+                    <function>getConfigGCRP</function>
+                </pwa_config_gcrp>
             </router>
         </apirouters>
         <xretail>
@@ -539,6 +646,7 @@
                 <custom_sale_tax_class>0</custom_sale_tax_class>
                 <sync_when_cart_changes>0</sync_when_cart_changes>
                 <integrate_freegift>none</integrate_freegift>
+                <allow_pending_order>0</allow_pending_order>
             </pos>
         </xretail>
     </default>
