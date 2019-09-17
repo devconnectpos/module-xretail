@@ -12,32 +12,6 @@
                 <php_run_time>php</php_run_time>
             </advance>
         </xpos>
-        <pwa>
-            <brand_name>
-                <pwa_brand_active>Connectpos</pwa_brand_active>
-            </brand_name>
-        </pwa>
-        <pwa>
-            <banner>
-                <pwa_banner_active>5</pwa_banner_active>
-            </banner>
-        </pwa>
-        <pwa>
-            <integrate>
-                <pwa_integrate_reward_points>no</pwa_integrate_reward_points>
-                <pwa_integrate_gift_card>no</pwa_integrate_gift_card>
-            </integrate>
-        </pwa>
-        <pwa>
-            <color_picker>
-                <pwa_theme_color>#2db9b0</pwa_theme_color>
-            </color_picker>
-        </pwa>
-        <pwa>
-            <product_category>
-                <pwa_show_product_visibility>1,2,3,4</pwa_show_product_visibility>
-            </product_category>
-        </pwa>
         <apirouters>
             <router>
                 <!--Product-->
