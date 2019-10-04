@@ -29,6 +29,9 @@
                     <label>Sync Realtime</label>
                     <source_model>SM\XRetail\Config\Model\Realtime</source_model>
                 </field>
+                <field id="realtime_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Realtime URL</label>
+                </field>
             </group>
         </section>
     </system>
