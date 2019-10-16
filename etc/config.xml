@@ -613,6 +613,12 @@
                     <service>SM\PWAQrCode\Repositories\AheadworksIntegrateManagement</service>
                     <function>getConfigGCRP</function>
                 </pwa_config_gcrp>
+
+                <magento-invoice>
+                    <method>Get</method>
+                    <service>SM\Sales\Repositories\OrderManagement</service>
+                    <function>printMagentoInvoice</function>
+                </magento-invoice>
             </router>
         </apirouters>
         <xretail>
