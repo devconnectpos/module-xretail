@@ -645,12 +645,12 @@ class UpgradeSchema implements UpgradeSchemaInterface {
                     "logo_image_status" => true,
                     "footer_image_status" =>true,
                     "subtotal_incl_tax"  => true,
-                    "header"             => "<h2>X-POS</h2>",
+                    "header"             => "<h2>ConnectPOS</h2>",
                     "footer"             => "Thank you for shopping!",
                     "enable_barcode"     => true,
                     "barcode_symbology"  => "CODE128",
                     "enable_power_text"  => true,
-                    "name"               => "X-Retail default receipt",
+                    "name"               => "ConnectPOS default receipt",
                     "is_default"         => true,
                 ]
             ]
