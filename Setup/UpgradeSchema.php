@@ -70,6 +70,9 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         if (version_compare($context->getVersion(), '0.3.6', '<')) {
             $this->modifyOutletColumn($setup);
         }
+        if (version_compare($context->getVersion(), '0.3.7', '<')) {
+            $this->addAllowOutOfStockFieldToOutlet($setup);
+        }
     }
 
     /**
@@ -1020,5 +1023,24 @@ class UpgradeSchema implements UpgradeSchemaInterface {
             );
 
         $installer->endSetup();
+    }
+
+    protected function addAllowOutOfStockFieldToOutlet(SchemaSetupInterface $setup)
+    {
+        $installer = $setup;
+        $installer->startSetup();
+        $tableName = $installer->getTable('sm_xretail_outlet');
+        $installer->getConnection()
+                  ->addColumn(
+                      $tableName,
+                      'allow_out_of_stock',
+                      [
+                          'type'     => Table::TYPE_SMALLINT,
+                          'length'   => 1,
+                          'nullable' => false,
+                          'default' => 1,
+                          'comment'  => 'Allow placing order with out of stock products'
+                      ]
+                  );
     }
 }
