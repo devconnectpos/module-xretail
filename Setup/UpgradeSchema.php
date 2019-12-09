@@ -73,6 +73,10 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         if (version_compare($context->getVersion(), '0.3.7', '<')) {
             $this->addAllowOutOfStockFieldToOutlet($setup);
         }
+        if (version_compare($context->getVersion(), '0.3.8', '<')) {
+            $this->allowAddressURLLogoReceipt($setup);
+            $this->modifyColumnFooterReceipt($setup);
+        }
     }
 
     /**
@@ -1042,5 +1046,64 @@ class UpgradeSchema implements UpgradeSchemaInterface {
                           'comment'  => 'Allow placing order with out of stock products'
                       ]
                   );
+    }
+
+    /**
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     */
+    protected function allowAddressURLLogoReceipt(SchemaSetupInterface $setup)
+    {
+        $installer = $setup;
+        $installer->startSetup();
+
+        $installer
+            ->getConnection()
+            ->addColumn(
+                $installer->getTable('sm_xretail_receipt'),
+                'insert_header_logo',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255,
+                    ['nullable' => false, 'default' => 'upload'],
+                    'comment'  => 'Insert Header Logo'
+                ]
+            );
+
+        $installer
+            ->getConnection()
+            ->addColumn(
+                $installer->getTable('sm_xretail_receipt'),
+                'insert_footer_logo',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255,
+                    ['nullable' => false, 'default' => 'upload'],
+                    'comment'  => 'Insert Footer Logo'
+                ]
+            );
+
+        $installer->endSetup();
+    }
+
+    /**
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     */
+    protected function modifyColumnFooterReceipt(SchemaSetupInterface $setup)
+    {
+        $receiptTable = $setup->getTable('sm_xretail_receipt');
+        $setup->startSetup();
+
+        $setup->getConnection()->modifyColumn(
+            $setup->getTable($receiptTable),
+            'footer',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 255000,
+                ['nullable' => false,],
+                'Footer'
+            ]
+        );
+
+        $setup->endSetup();
     }
 }
