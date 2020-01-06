@@ -60,7 +60,7 @@ class Data extends AbstractHelper
     /**
      * @var string
      */
-    public static $API_VERSION = '19.12.09';
+    public static $API_VERSION = '20.01.06';
 
     /**
      * Data constructor.
@@ -158,6 +158,7 @@ class Data extends AbstractHelper
      * @param integer $storeId
      *
      * @return mixed
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     protected function getTimezoneForStore($storeId)
     {
