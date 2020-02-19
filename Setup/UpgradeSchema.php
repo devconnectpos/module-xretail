@@ -77,6 +77,9 @@ class UpgradeSchema implements UpgradeSchemaInterface {
             $this->allowAddressURLLogoReceipt($setup);
             $this->modifyColumnFooterReceipt($setup);
         }
+        if (version_compare($context->getVersion(), '0.3.9', '<')) {
+            $this->addLocationOutlet($setup);
+        }
     }
 
     /**
@@ -1105,5 +1108,23 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         );
 
         $setup->endSetup();
+    }
+
+    protected function addLocationOutlet(SchemaSetupInterface $setup)
+    {
+        $installer = $setup;
+        $installer->startSetup();
+        $tableName = $installer->getTable('sm_xretail_outlet');
+        $installer->getConnection()
+            ->addColumn(
+                $tableName,
+                'location_id',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255,
+                    'nullable' => false,
+                    'comment'  => 'Location Id'
+                ]
+            );
     }
 }

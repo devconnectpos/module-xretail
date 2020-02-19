@@ -614,6 +614,30 @@
                     <function>getConfigGCRP</function>
                 </pwa_config_gcrp>
 
+                <!--store-pick-up-->
+                <store-pick-up>
+                    <method>Get</method>
+                    <service>SM\Integrate\Model\StorePickUpIntegrateManagement</service>
+                    <function>getList</function>
+                </store-pick-up>
+
+                <!--rma-->
+                <order-rma>
+                    <method>Get</method>
+                    <service>SM\Integrate\Model\RMAIntegrateManagement</service>
+                    <function>getOrderRMA</function>
+                </order-rma>
+                <create-request-rma>
+                    <method>Post</method>
+                    <service>SM\Integrate\Model\RMAIntegrateManagement</service>
+                    <function>createRequestRMA</function>
+                </create-request-rma>
+
+                <custom-fields>
+                    <method>Get</method>
+                    <service>SM\Integrate\Model\RMAIntegrateManagement</service>
+                    <function>getListCustomFields</function>
+                </custom-fields>
                 <magento-invoice>
                     <method>Get</method>
                     <service>SM\Sales\Repositories\OrderManagement</service>
