@@ -643,6 +643,12 @@
                     <service>SM\Sales\Repositories\OrderManagement</service>
                     <function>printMagentoInvoice</function>
                 </magento-invoice>
+
+                <aw-giftcard-codepool>
+                    <method>Get</method>
+                    <service>SM\Integrate\Model\GCIntegrateManagement</service>
+                    <function>getAwGiftCardCodePools</function>
+                </aw-giftcard-codepool>
             </router>
         </apirouters>
         <xretail>
