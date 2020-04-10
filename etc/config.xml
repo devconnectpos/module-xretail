@@ -431,6 +431,12 @@
                     <function>updateShippingMethods</function>
                 </shipping-methods>
 
+                <multi-shipping-rates>
+                    <method>Post</method>
+                    <service>SM\Shipping\Repositories\ShippingManagement</service>
+                    <function>getMultiShippingRates</function>
+                </multi-shipping-rates>
+
                 <!--MediaLibrary-->
                 <media-library>
                     <method>Get</method>
