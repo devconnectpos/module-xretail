@@ -14,6 +14,8 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\DateTimeFactory;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\ResourceModel\Order\CollectionFactoryInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use SM\XRetail\Model\OutletFactory;
@@ -60,31 +62,45 @@ class Data extends AbstractHelper
     /**
      * @var string
      */
-    public static $API_VERSION = '20.03.19';
-
-    /**
-     * Data constructor.
-     *
-     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezoneInterface
-     * @param \Magento\Framework\Stdlib\DateTime\DateTimeFactory   $dateFactory
-     * @param \SM\XRetail\Model\OutletFactory                      $outletFactory
-     * @param \Magento\Framework\App\Helper\Context                $context
-     * @param \Magento\Framework\ObjectManagerInterface            $objectManager
-     * @param \Magento\Store\Model\StoreManagerInterface           $storeManager
-     */
+    public static $API_VERSION = '20.04.10';
+	/**
+	 * @var OrderRepositoryInterface
+	 */
+	private $orderRepository;
+	/**
+	 * @var CollectionFactoryInterface
+	 */
+	private $orderCollectionFactory;
+	
+	/**
+	 * Data constructor.
+	 *
+	 * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezoneInterface
+	 * @param \Magento\Framework\Stdlib\DateTime\DateTimeFactory $dateFactory
+	 * @param \SM\XRetail\Model\OutletFactory $outletFactory
+	 * @param \Magento\Framework\App\Helper\Context $context
+	 * @param \Magento\Framework\ObjectManagerInterface $objectManager
+	 * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+	 * @param OrderRepositoryInterface $orderRepository
+	 * @param CollectionFactoryInterface $orderCollectionFactory
+	 */
     public function __construct(
         TimezoneInterface $timezoneInterface,
         DateTimeFactory $dateFactory,
         OutletFactory $outletFactory,
         Context $context,
         ObjectManagerInterface $objectManager,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+		OrderRepositoryInterface $orderRepository,
+		CollectionFactoryInterface $orderCollectionFactory
     ) {
-        $this->dateFactory      = $dateFactory;
+        $this->dateFactory       = $dateFactory;
         $this->outletFactory     = $outletFactory;
         $this->timezoneInterface = $timezoneInterface;
         $this->objectManager     = $objectManager;
         $this->storeManager      = $storeManager;
+        $this->orderRepository   = $orderRepository;
+        $this->orderCollectionFactory = $orderCollectionFactory;
         parent::__construct($context);
     }
 
@@ -308,5 +324,17 @@ class Data extends AbstractHelper
         $timeObject = new \DateTime($time, new \DateTimeZone($this->getTimezoneForStore($storeId)));
         $timeObject = $timeObject->format('U');
         return $timeObject = date("Y-m-d H:i:s",$timeObject);
+    }
+	
+	/**
+	 * @param $field
+	 * @param $value
+	 * @return \Magento\Framework\DataObject
+	 */
+	public function getOrderByField($field, $value)
+    {
+    	$orderCollection = $this->orderCollectionFactory->create()->addFieldToFilter($field, ['eq' => $value]);
+	    
+    	return $orderCollection->getFirstItem();
     }
 }
