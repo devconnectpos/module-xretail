@@ -80,6 +80,9 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         if (version_compare($context->getVersion(), '0.3.9', '<')) {
             $this->addLocationOutlet($setup);
         }
+        if (version_compare($context->getVersion(), '0.4.0', '<')) {
+            $this->modifyColumnCashierIdOutlet($setup);
+        }
     }
 
     /**
@@ -1126,5 +1129,27 @@ class UpgradeSchema implements UpgradeSchemaInterface {
                     'comment'  => 'Location Id'
                 ]
             );
+    }
+
+    /**
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     */
+    protected function modifyColumnCashierIdOutlet(SchemaSetupInterface $setup)
+    {
+        $outletTable = $setup->getTable('sm_xretail_outlet');
+        $setup->startSetup();
+
+        $setup->getConnection()->modifyColumn(
+            $setup->getTable($outletTable),
+            'cashier_ids',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 255000,
+                ['nullable' => false],
+                'Cashier Ids'
+            ]
+        );
+
+        $setup->endSetup();
     }
 }
