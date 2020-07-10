@@ -83,6 +83,10 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         if (version_compare($context->getVersion(), '0.4.0', '<')) {
             $this->modifyColumnCashierIdOutlet($setup);
         }
+        
+        if (version_compare($context->getVersion(), '0.4.1', '<')) {
+            $this->addCustomTaxColumnsToReceipt($setup);
+        }
     }
 
     /**
@@ -1152,4 +1156,37 @@ class UpgradeSchema implements UpgradeSchemaInterface {
 
         $setup->endSetup();
     }
+	
+	protected function addCustomTaxColumnsToReceipt(SchemaSetupInterface $setup)
+	{
+		$installer = $setup;
+		$installer->startSetup();
+		
+		$receiptTable = $installer->getTable('sm_xretail_receipt');
+		
+		$installer->getConnection()->addColumn(
+			$installer->getTable($receiptTable),
+			'display_custom_tax',
+			[
+				'type' => Table::TYPE_INTEGER,
+				'length' => 3,
+				'nullable' => true,
+				'default' => 0,
+				'comment' => 'Is Display Custom Tax'
+			]
+		);
+		
+		$installer->getConnection()->addColumn(
+			$installer->getTable($receiptTable),
+			'custom_tax_multiplier',
+			[
+				'type' => Table::TYPE_DECIMAL,
+				'length' => '12,9',
+				'nullable' => true,
+				'default' => 0,
+				'comment' => 'Custom Tax Multiplier'
+			]
+		);
+		
+	}
 }
