@@ -87,6 +87,9 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         if (version_compare($context->getVersion(), '0.4.1', '<')) {
             $this->addCustomTaxColumnsToReceipt($setup);
         }
+        if (version_compare($context->getVersion(), '0.4.2', '<')) {
+            $this->addSettingForA4Receipt($setup);
+        }
     }
 
     /**
@@ -1189,4 +1192,124 @@ class UpgradeSchema implements UpgradeSchemaInterface {
 		);
 		
 	}
+
+    /**
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     */
+    protected function addSettingForA4Receipt(SchemaSetupInterface $setup)
+    {
+        $installer = $setup;
+        $installer->startSetup();
+        $tableName = $installer->getTable('sm_xretail_receipt');
+
+        $installer->getConnection()
+                  ->addColumn(
+                      $tableName,
+                      'paper_size',
+                      [
+                          'type'     => Table::TYPE_TEXT,
+                          'length'   => 255,
+                          'nullable' => false,
+                          'comment'  => 'Paper Size'
+                      ]
+                  );
+
+        $installer->getConnection()
+                  ->addColumn(
+                      $tableName,
+                      'style_customer_info',
+                      [
+                          'type'     => Table::TYPE_TEXT,
+                          'length'   => 255,
+                          'nullable' => false,
+                          'comment'  => 'Style For Customer Info'
+                      ]
+                  );
+
+        $installer->getConnection()
+                  ->addColumn(
+                      $tableName,
+                      'store_info',
+                      [
+                          'type'     => Table::TYPE_TEXT,
+                          'length'   => 255,
+                          'nullable' => false,
+                          'comment'  => 'Store Info'
+                      ]
+                  );
+
+        $installer->getConnection()
+                  ->addColumn(
+                      $tableName,
+                      'store_phone',
+                      [
+                          'type'     => Table::TYPE_TEXT,
+                          'length'   => 255,
+                          'nullable' => false,
+                          'comment'  => 'Store Phone'
+                      ]
+                  );
+
+        $installer->getConnection()
+                  ->addColumn(
+                      $tableName,
+                      'store_website',
+                      [
+                          'type'     => Table::TYPE_TEXT,
+                          'length'   => 255,
+                          'nullable' => false,
+                          'comment'  => 'Store Website'
+                      ]
+                  );
+
+        $installer->getConnection()
+                  ->addColumn(
+                      $tableName,
+                      'store_email',
+                      [
+                          'type'     => Table::TYPE_TEXT,
+                          'length'   => 255,
+                          'nullable' => false,
+                          'comment'  => 'Store Email'
+                      ]
+                  );
+
+        $installer->getConnection()
+                  ->addColumn(
+                      $tableName,
+                      'enable_terms_and_conditions',
+                      [
+                          'type'     => Table::TYPE_TEXT,
+                          'length'   => 255,
+                          'nullable' => false,
+                          'comment'  => 'Terms and Conditions of Sale'
+                      ]
+                  );
+
+        $installer->getConnection()
+                  ->addColumn(
+                      $tableName,
+                      'terms_and_conditions',
+                      [
+                          'type'     => Table::TYPE_TEXT,
+                          'length'   => 255000,
+                          'nullable' => false,
+                          'comment'  => 'Terms and Conditions Content'
+                      ]
+                  );
+
+        $installer->getConnection()
+                  ->addColumn(
+                      $tableName,
+                      'enable_customer_signature',
+                      [
+                          'type'     => Table::TYPE_TEXT,
+                          'length'   => 255,
+                          'nullable' => false,
+                          'comment'  => 'Customer Signature'
+                      ]
+                  );
+
+        $installer->endSetup();
+    }
 }
