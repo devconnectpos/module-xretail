@@ -2,7 +2,7 @@
 	"name": "connectpos/module-xretail",
 	"description": "N/A",
 	"type": "magento2-module",
-	"version": "20.07.15",
+	"version": "20.07.29",
 	"license": [
 		"proprietary"
 	],
