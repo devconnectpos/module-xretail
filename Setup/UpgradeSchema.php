@@ -14,7 +14,8 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 /**
  * @codeCoverageIgnore
  */
-class UpgradeSchema implements UpgradeSchemaInterface {
+class UpgradeSchema implements UpgradeSchemaInterface
+{
     /**
      * {@inheritdoc}
      */
@@ -89,6 +90,9 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         }
         if (version_compare($context->getVersion(), '0.4.2', '<')) {
             $this->addSettingForA4Receipt($setup);
+        }
+        if (version_compare($context->getVersion(), '0.4.3', '<')) {
+            $this->addTemplateTaxLabelSetting($setup);
         }
     }
 
@@ -660,7 +664,8 @@ class UpgradeSchema implements UpgradeSchemaInterface {
                             "sales_person"      => true,
                             "discount_shipment" => true
                         ],
-                        true),
+                        true
+                    ),
                     "row_total_incl_tax" => true,
                     "logo_image_status" => true,
                     "footer_image_status" =>true,
@@ -1009,7 +1014,8 @@ class UpgradeSchema implements UpgradeSchemaInterface {
         $installer->endSetup();
     }
 
-    protected function modifyOutletColumn(SchemaSetupInterface $setup) {
+    protected function modifyOutletColumn(SchemaSetupInterface $setup)
+    {
         $installer = $setup;
         $installer->startSetup();
 
@@ -1159,39 +1165,38 @@ class UpgradeSchema implements UpgradeSchemaInterface {
 
         $setup->endSetup();
     }
-	
-	protected function addCustomTaxColumnsToReceipt(SchemaSetupInterface $setup)
-	{
-		$installer = $setup;
-		$installer->startSetup();
-		
-		$receiptTable = $installer->getTable('sm_xretail_receipt');
-		
-		$installer->getConnection()->addColumn(
-			$installer->getTable($receiptTable),
-			'display_custom_tax',
-			[
-				'type' => Table::TYPE_INTEGER,
-				'length' => 3,
-				'nullable' => true,
-				'default' => 0,
-				'comment' => 'Is Display Custom Tax'
-			]
-		);
-		
-		$installer->getConnection()->addColumn(
-			$installer->getTable($receiptTable),
-			'custom_tax_multiplier',
-			[
-				'type' => Table::TYPE_DECIMAL,
-				'length' => '12,9',
-				'nullable' => true,
-				'default' => 0,
-				'comment' => 'Custom Tax Multiplier'
-			]
-		);
-		
-	}
+    
+    protected function addCustomTaxColumnsToReceipt(SchemaSetupInterface $setup)
+    {
+        $installer = $setup;
+        $installer->startSetup();
+        
+        $receiptTable = $installer->getTable('sm_xretail_receipt');
+        
+        $installer->getConnection()->addColumn(
+            $installer->getTable($receiptTable),
+            'display_custom_tax',
+            [
+                'type' => Table::TYPE_INTEGER,
+                'length' => 3,
+                'nullable' => true,
+                'default' => 0,
+                'comment' => 'Is Display Custom Tax'
+            ]
+        );
+        
+        $installer->getConnection()->addColumn(
+            $installer->getTable($receiptTable),
+            'custom_tax_multiplier',
+            [
+                'type' => Table::TYPE_DECIMAL,
+                'length' => '12,9',
+                'nullable' => true,
+                'default' => 0,
+                'comment' => 'Custom Tax Multiplier'
+            ]
+        );
+    }
 
     /**
      * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
@@ -1312,4 +1317,24 @@ class UpgradeSchema implements UpgradeSchemaInterface {
 
         $installer->endSetup();
     }
+	
+	protected function addTemplateTaxLabelSetting(SchemaSetupInterface $setup)
+	{
+		$installer = $setup;
+		$installer->startSetup();
+		
+		$receiptTable = $installer->getTable('sm_xretail_receipt');
+		
+		$installer->getConnection()->addColumn(
+			$installer->getTable($receiptTable),
+			'custom_tax_label',
+			[
+				'type' => Table::TYPE_TEXT,
+				'length' => 20,
+				'nullable' => true,
+				'default' => 'Tax',
+				'comment' => 'Custom Tax Label'
+			]
+		);
+	}
 }
