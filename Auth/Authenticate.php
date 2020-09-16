@@ -11,39 +11,140 @@ use Exception;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 use SM\XRetail\Controller\V1\Xretail;
+use \Firebase\JWT\JWT;
+use \Firebase\JWT\ExpiredException;
+use SM\XRetail\Repositories\AccessTokenManagement;
+use Magento\Config\Model\Config\Loader;
 
 class Authenticate
 {
-    private $_configuration;
-
     /**
-     * @var \Magento\Framework\Encryption\EncryptorInterface
+     * @var Loader
+     */
+    protected $configLoader;
+    /**
+     * @var EncryptorInterface
      */
     protected $encryptor;
+    /**
+     * @var AccessTokenManagement
+     */
+    protected $accessTokenManagement;
+    /**
+     * @var bool
+     */
+    public static $isExpiredToken = false;
+    const ALGORITHM = 'HS256';
 
+    /**
+     * Authenticate constructor.
+     * @param ScopeConfigInterface $scopeConfig
+     * @param EncryptorInterface $encryptor
+     * @param AccessTokenManagement $accessTokenManagement
+     * @param Loader $loader
+     */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        EncryptorInterface $encryptor
+        EncryptorInterface $encryptor,
+        AccessTokenManagement $accessTokenManagement,
+        Loader $loader
     ) {
-        $this->_configuration = $scopeConfig;
-        $this->encryptor      = $encryptor;
+        $this->configLoader  = $loader;
+        $this->encryptor   = $encryptor;
+        $this->accessTokenManagement = $accessTokenManagement;
     }
 
     /**
-     * @param \SM\XRetail\Controller\V1\Xretail $controller
-     *
+     * @param Xretail $controller
      * @return $this
-     * @throws \Exception
+     * @throws Exception
      */
     public function authenticate(Xretail $controller)
     {
-        $tokenKey = $controller->getRequest()->getParam('__token_key');
-        $retailLicense = base64_encode($this->encryptor->decrypt($this->_configuration->getValue("xpos/general/retail_license")));
-
-        if ($tokenKey && $tokenKey === $retailLicense) {
+        if ($controller->getPath() === 'token') {
             return $this;
         }
-        $controller->setStatusCode(403);
-        throw new Exception('Forbidden');
+        if ($controller->getRequest()) {
+            $authHeader = $controller->getRequest()->getHeader('authorization');
+            $userId = $controller->getRequest()->getParam('userId');
+            if (!$userId) {
+                throw new Exception(__('Wrong Username. Please try again'));
+            }
+            /*
+             * Look for the 'authorization' header
+             */
+            if ($authHeader) {
+                /*
+                 * Extract the jwt from the Bearer
+                 */
+                list($jwt) = sscanf( $authHeader, 'Bearer %s');
+
+                if ($jwt) {
+                    try {
+                        //Get Last secret key
+                        $secretKey = $this->accessTokenManagement->getSecretKey();
+
+                        JWT::$leeway = 10;
+                        JWT::decode($jwt, $secretKey, array(Authenticate::ALGORITHM));
+                    } catch (Exception $e) {
+                        // Handle expired token
+                        // Auto generate new token and add to response header
+                        if ($e instanceof ExpiredException && $this->isLastToken($jwt, $userId)) {
+                            Authenticate::$isExpiredToken = true;
+                            $this->accessTokenManagement->generateAccessToken();
+                            return $this;
+                        }
+                        /*
+                         * the token was not able to be decoded.
+                         * this is likely because the signature was not able to be verified (tampered token)
+                         */
+                        $controller->setStatusCode(401);
+                        throw new Exception('Unauthorized. Permission Denied! '. $e->getMessage());
+                    }
+                } else {
+                    /*
+                     * No token was able to be extracted from the authorization header
+                     */
+                    $controller->setStatusCode(400);
+                    throw new Exception('Bad Request');
+                }
+            } else {
+                /*
+                 * The request lacks the authorization token
+                 */
+                $controller->setStatusCode(400);
+                throw new Exception('Token Not Found In Request');
+            }
+        } else {
+            $controller->setStatusCode(405);
+            throw new Exception('405 Method Not Allowed');
+        }
+    }
+
+    /**
+     * @param $userId
+     * @return mixed
+     * @throws Exception
+     */
+    private final function getLastTokenByUserId($userId)
+    {
+        $token = $this->accessTokenManagement->getTokenCollectionByUserId($userId);
+
+        if ($token !== null) {
+            return $token->getData('token');
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $token
+     * @param $userId
+     * @return bool
+     * @throws Exception
+     */
+    private final function isLastToken($token, $userId)
+    {
+        return $token === $this->getLastTokenByUserId($userId);
     }
 }
