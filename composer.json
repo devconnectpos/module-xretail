@@ -23,7 +23,8 @@
 		"magento/module-quote": ">100.0",
 		"magento/module-checkout": ">100.0",
 		"magento/module-ui": ">100.0",
-		"magento/framework": ">100.0"
+		"magento/framework": ">100.0",
+		"firebase/php-jwt": "^5.2.0"
 	},
 	"autoload": {
 		"files": [
