@@ -94,6 +94,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
         if (version_compare($context->getVersion(), '0.4.3', '<')) {
             $this->addTemplateTaxLabelSetting($setup);
         }
+        if (version_compare($context->getVersion(), '0.4.4', '<')) {
+            $this->addTokenManageTable($setup);
+        }
     }
 
     /**
@@ -1337,4 +1340,55 @@ class UpgradeSchema implements UpgradeSchemaInterface
 			]
 		);
 	}
+
+    /**
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     *
+     * @throws \Zend_Db_Exception
+     */
+    protected function addTokenManageTable(SchemaSetupInterface $setup)
+    {
+        $installer = $setup;
+        $installer->startSetup();
+
+        if ($setup->getConnection()->isTableExists($installer->getTable('sm_token'))) {
+            $installer->endSetup();
+        }
+        $table = $installer->getConnection()->newTable(
+            $installer->getTable('sm_token')
+        )->addColumn(
+            'id',
+            Table::TYPE_INTEGER,
+            null,
+            ['identity' => true, 'nullable' => false, 'primary' => true, 'unsigned' => true,],
+            'Entity ID'
+        )->addColumn(
+            'token',
+            Table::TYPE_TEXT,
+            25500,
+            ['nullable' => false],
+            'Token'
+        )->addColumn(
+            'user_id',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false,],
+            'User Id'
+        )->addColumn(
+            'expired_at',
+            Table::TYPE_TIMESTAMP,
+            null,
+            ['nullable' => false, 'default' => Table::TIMESTAMP_INIT],
+            'Expired At'
+        )->addColumn(
+            'created_at',
+            Table::TYPE_TIMESTAMP,
+            null,
+            ['nullable' => false, 'default' => Table::TIMESTAMP_INIT],
+            'Created At'
+        );
+        $installer->getConnection()->createTable($table);
+
+        $installer->endSetup();
+    }
 }

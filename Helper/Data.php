@@ -62,7 +62,7 @@ class Data extends AbstractHelper
     /**
      * @var string
      */
-    public static $API_VERSION = '20.09.15';
+    public static $API_VERSION = '20.09.16';
 	/**
 	 * @var OrderRepositoryInterface
 	 */
@@ -336,5 +336,10 @@ class Data extends AbstractHelper
     	$orderCollection = $this->orderCollectionFactory->create()->addFieldToFilter($field, ['eq' => $value]);
 	    
     	return $orderCollection->getFirstItem();
+    }
+
+    public function checkFirebaseJwtSdk()
+    {
+        return class_exists('Firebase\JWT\JWT');
     }
 }

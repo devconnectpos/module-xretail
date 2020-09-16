@@ -7,7 +7,10 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\PageCache\Model\Config;
 use SM\XRetail\Auth\Authenticate;
 use SM\XRetail\Controller\Contract\ApiAbstract;
+use SM\XRetail\Helper\Data as RetailHelper;
 use SM\XRetail\Model\Api\Configuration;
+use Exception;
+use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Class Xretail
@@ -22,25 +25,37 @@ class Xretail extends ApiAbstract
      * @var \SM\XRetail\Auth\Authenticate
      */
     private $authenticate;
+    /**
+     * @var RetailHelper
+     */
+    protected $retailHelper;
+    /**
+     * @var \Magento\Framework\ObjectManagerInterface
+     */
+    private $objectManager;
 
     /**
      * Xretail constructor.
-     *
-     * @param \Magento\Framework\App\Action\Context              $context
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \SM\XRetail\Model\Api\Configuration                $configuration
-     * @param \Magento\PageCache\Model\Config                    $config
-     * @param \SM\XRetail\Auth\Authenticate                      $authenticate
+     * @param Context $context
+     * @param ScopeConfigInterface $scopeConfig
+     * @param Configuration $configuration
+     * @param Config $config
+     * @param Authenticate $authenticate
+     * @param RetailHelper $retailHelper
+     * @param ObjectManagerInterface $objectManager
      */
     public function __construct(
         Context $context,
         ScopeConfigInterface $scopeConfig,
         Configuration $configuration,
         Config $config,
-        Authenticate $authenticate
+        Authenticate $authenticate,
+        RetailHelper $retailHelper,
+        ObjectManagerInterface $objectManager
     ) {
-        parent::__construct($context, $scopeConfig, $configuration, $config);
+        parent::__construct($context, $scopeConfig, $configuration, $config, $objectManager);
         $this->authenticate = $authenticate;
+        $this->retailHelper = $retailHelper;
     }
 
     /**
@@ -50,7 +65,8 @@ class Xretail extends ApiAbstract
     {
         try {
             // authenticate
-            //$this->authenticate->authenticate($this);
+            $this->requireFirebaseJwtSdk();
+            $this->authenticate->authenticate($this);
 
             // communicate with api before
             $this->dispatchEvent('rest_api_before', ['apiController' => $this]);
@@ -69,6 +85,14 @@ class Xretail extends ApiAbstract
 
         } catch (\Exception $e) {
             return $this->outputError($e->getMessage(), $this->getStatusCode());
+        }
+    }
+
+    private function requireFirebaseJwtSdk() {
+        if (!$this->retailHelper->checkFirebaseJwtSdk()) {
+            throw new Exception(
+                __('Firebase JWT is not installed yet. Please run \'composer require firebase/php-jwt\' to install Firebase JWT!')
+            );
         }
     }
 }

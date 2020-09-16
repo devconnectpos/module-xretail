@@ -655,6 +655,11 @@
                     <service>SM\Integrate\Model\GCIntegrateManagement</service>
                     <function>getAwGiftCardCodePools</function>
                 </aw-giftcard-codepool>
+                <token>
+                    <method>Post</method>
+                    <service>SM\XRetail\Repositories\AccessTokenManagement</service>
+                    <function>generateAccessToken</function>
+                </token>
             </router>
         </apirouters>
         <xretail>
