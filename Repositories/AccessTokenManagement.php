@@ -91,6 +91,8 @@ class AccessTokenManagement extends ServiceAbstract
         $exp = $iat + $tokenExpireAfter; // expire time of token in seconds
 
         $userId = $this->getRequest()->getParam('userId');
+        $website = $this->getRequest()->getParam('website');
+
         if (!$userId) {
             throw new Exception(__('Wrong Username. Please try again'));
         }
@@ -99,7 +101,8 @@ class AccessTokenManagement extends ServiceAbstract
             "iat" => $iat,
             "nbf" => $nbf,
             "exp" => $exp,
-            "userId" => $userId
+            "userId" => $userId,
+            "website" => $website
         );
         $token = JWT::encode($token, $secretKey);
         $this->saveTokenForUserId($userId, $token, $exp);

@@ -5,7 +5,7 @@
  * Time: 10:15 AM
  */
 
-namespace SM\XRetail\Controller\Contract\AbstractClass;
+namespace SM\XRetail\Controller\Contract;
 
 use Exception;
 use Magento\Framework\App\Action\Action;
