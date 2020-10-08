@@ -660,6 +660,13 @@
                     <service>SM\XRetail\Repositories\AccessTokenManagement</service>
                     <function>generateAccessToken</function>
                 </token>
+
+                <!-- Get Customer Online Active Cart -->
+                <online-carts>
+                    <method>Get</method>
+                    <service>SM\Sales\Repositories\QuoteManagement</service>
+                    <function>getOnlineCarts</function>
+                </online-carts>
             </router>
         </apirouters>
         <xretail>
