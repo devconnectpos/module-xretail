@@ -47,7 +47,6 @@ class Xretail extends ApiAbstract
      * @param Authenticate $authenticate
      * @param RetailHelper $retailHelper
      * @param ObjectManagerInterface $objectManager
-     * @param \Magento\Config\Model\Config\Loader $configLoader
      */
     public function __construct(
         Context $context,
@@ -56,13 +55,11 @@ class Xretail extends ApiAbstract
         Config $config,
         Authenticate $authenticate,
         RetailHelper $retailHelper,
-        ObjectManagerInterface $objectManager,
-        \Magento\Config\Model\Config\Loader $configLoader
+        ObjectManagerInterface $objectManager
     ) {
         parent::__construct($context, $scopeConfig, $configuration, $config, $objectManager);
         $this->authenticate = $authenticate;
         $this->retailHelper = $retailHelper;
-        $this->configLoader = $configLoader;
     }
 
     /**
@@ -72,8 +69,7 @@ class Xretail extends ApiAbstract
     {
         try {
             // authenticate
-            $secureSetting = $this->configLoader->getConfigByPath('xretail/pos/enable_secure_request', 'default', 0);
-
+            $secureSetting = $this->retailHelper->getStoreConfig('xretail/pos/enable_secure_request');
             if ($secureSetting) {
                 $this->requireFirebaseJwtSdk();
                 $this->authenticate->authenticate($this);

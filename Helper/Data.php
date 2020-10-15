@@ -34,7 +34,11 @@ class Data extends AbstractHelper
      * @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface
      */
     protected $timezoneInterface;
-
+    /**
+     * @var \Magento\Config\Model\Config\Loader
+     */
+    protected $configLoader;
+    
     /**
      * @var array
      */
@@ -62,7 +66,7 @@ class Data extends AbstractHelper
     /**
      * @var string
      */
-    public static $API_VERSION = '20.10.08';
+    public static $API_VERSION = '20.10.15';
 	/**
 	 * @var OrderRepositoryInterface
 	 */
@@ -71,19 +75,20 @@ class Data extends AbstractHelper
 	 * @var CollectionFactoryInterface
 	 */
 	private $orderCollectionFactory;
-	
-	/**
-	 * Data constructor.
-	 *
-	 * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezoneInterface
-	 * @param \Magento\Framework\Stdlib\DateTime\DateTimeFactory $dateFactory
-	 * @param \SM\XRetail\Model\OutletFactory $outletFactory
-	 * @param \Magento\Framework\App\Helper\Context $context
-	 * @param \Magento\Framework\ObjectManagerInterface $objectManager
-	 * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-	 * @param OrderRepositoryInterface $orderRepository
-	 * @param CollectionFactoryInterface $orderCollectionFactory
-	 */
+    
+    /**
+     * Data constructor.
+     *
+     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezoneInterface
+     * @param \Magento\Framework\Stdlib\DateTime\DateTimeFactory $dateFactory
+     * @param \SM\XRetail\Model\OutletFactory $outletFactory
+     * @param \Magento\Framework\App\Helper\Context $context
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param OrderRepositoryInterface $orderRepository
+     * @param CollectionFactoryInterface $orderCollectionFactory
+     * @param \Magento\Config\Model\Config\Loader $configLoader
+     */
     public function __construct(
         TimezoneInterface $timezoneInterface,
         DateTimeFactory $dateFactory,
@@ -92,7 +97,8 @@ class Data extends AbstractHelper
         ObjectManagerInterface $objectManager,
         StoreManagerInterface $storeManager,
 		OrderRepositoryInterface $orderRepository,
-		CollectionFactoryInterface $orderCollectionFactory
+		CollectionFactoryInterface $orderCollectionFactory,
+        \Magento\Config\Model\Config\Loader $configLoader
     ) {
         $this->dateFactory       = $dateFactory;
         $this->outletFactory     = $outletFactory;
@@ -102,6 +108,7 @@ class Data extends AbstractHelper
         $this->orderRepository   = $orderRepository;
         $this->orderCollectionFactory = $orderCollectionFactory;
         parent::__construct($context);
+        $this->configLoader = $configLoader;
     }
 
     /**
@@ -156,17 +163,20 @@ class Data extends AbstractHelper
 
         return $sums;
     }
-
+    
     /**
-     * Wrap magento get Config
-     *
      * @param $path
-     *
-     * @return mixed
+     * @return false|mixed
      */
     public function getStoreConfig($path)
     {
-        return $this->scopeConfig->getValue($path);
+        $configData = $this->configLoader->getConfigByPath('xretail/pos', 'default', 0);
+        foreach ($configData as $config) {
+            if ($config['path'] === $path) {
+                return $config['value'];
+            }
+        }
+        return false;
     }
 
 
