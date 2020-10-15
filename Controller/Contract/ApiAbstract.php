@@ -11,10 +11,10 @@ use Exception;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\PageCache\Model\Config;
-use SM\XRetail\Model\Api\Configuration;
 use Magento\Framework\ObjectManagerInterface;
+use Magento\PageCache\Model\Config;
 use SM\XRetail\Auth\Authenticate;
+use SM\XRetail\Model\Api\Configuration;
 
 class ApiAbstract extends Action
 {
@@ -117,8 +117,8 @@ class ApiAbstract extends Action
              * */
             $response->setPublicHeaders($this->config->getTtl());
         }
-
-        return $response->setBody(json_encode($this->output));
+    
+        return $response->setBody(json_encode($this->output, JSON_HEX_QUOT | JSON_HEX_APOS | JSON_HEX_TAG | JSON_HEX_AMP));
     }
 
     /**
@@ -136,7 +136,8 @@ class ApiAbstract extends Action
      * @return mixed
      * @throws Exception
      */
-    private function getLastTokenValue() {
+    private function getLastTokenValue()
+    {
         $userId = $this->getRequest()->getParam('userId');
 
         if (!$userId) {
