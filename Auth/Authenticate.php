@@ -61,7 +61,7 @@ class Authenticate
      */
     public function authenticate(Xretail $controller)
     {
-        if ($controller->getPath() === 'token') {
+        if ($controller->getPath() === 'token' || $controller->getPath() === 'magento-invoice') {
             return $this;
         }
         if ($controller->getRequest()) {

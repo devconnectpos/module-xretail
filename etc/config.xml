@@ -667,6 +667,25 @@
                     <service>SM\Sales\Repositories\QuoteManagement</service>
                     <function>getOnlineCarts</function>
                 </online-carts>
+
+                <!-- Adyen payment -->
+                <adyen-payment-methods>
+                    <method>Get</method>
+                    <service>SM\Adyen\Repositories\AdyenManagement</service>
+                    <function>getPaymentMethods</function>
+                </adyen-payment-methods>
+
+                <adyen-process-payment>
+                    <method>Post</method>
+                    <service>SM\Adyen\Repositories\AdyenManagement</service>
+                    <function>processPayment</function>
+                </adyen-process-payment>
+
+                <adyen-process-refund>
+                    <method>Post</method>
+                    <service>SM\Adyen\Repositories\AdyenManagement</service>
+                    <function>processRefund</function>
+                </adyen-process-refund>
             </router>
         </apirouters>
         <xretail>
