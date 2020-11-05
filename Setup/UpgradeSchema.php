@@ -84,7 +84,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
         if (version_compare($context->getVersion(), '0.4.0', '<')) {
             $this->modifyColumnCashierIdOutlet($setup);
         }
-        
         if (version_compare($context->getVersion(), '0.4.1', '<')) {
             $this->addCustomTaxColumnsToReceipt($setup);
         }
@@ -97,6 +96,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
         if (version_compare($context->getVersion(), '0.4.4', '<')) {
             $this->addTokenManageTable($setup);
         }
+        if (version_compare($context->getVersion(), '0.4.5', '<')) {
+            $this->addDefaultGuestCustomerToOutlet($setup);
+        }
+        
+        $installer->endSetup();
     }
 
     /**
@@ -1320,26 +1324,26 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         $installer->endSetup();
     }
-	
-	protected function addTemplateTaxLabelSetting(SchemaSetupInterface $setup)
-	{
-		$installer = $setup;
-		$installer->startSetup();
-		
-		$receiptTable = $installer->getTable('sm_xretail_receipt');
-		
-		$installer->getConnection()->addColumn(
-			$installer->getTable($receiptTable),
-			'custom_tax_label',
-			[
-				'type' => Table::TYPE_TEXT,
-				'length' => 20,
-				'nullable' => true,
-				'default' => 'Tax',
-				'comment' => 'Custom Tax Label'
-			]
-		);
-	}
+    
+    protected function addTemplateTaxLabelSetting(SchemaSetupInterface $setup)
+    {
+        $installer = $setup;
+        $installer->startSetup();
+        
+        $receiptTable = $installer->getTable('sm_xretail_receipt');
+        
+        $installer->getConnection()->addColumn(
+            $installer->getTable($receiptTable),
+            'custom_tax_label',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 20,
+                'nullable' => true,
+                'default' => 'Tax',
+                'comment' => 'Custom Tax Label'
+            ]
+        );
+    }
 
     /**
      * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
@@ -1390,5 +1394,24 @@ class UpgradeSchema implements UpgradeSchemaInterface
         $installer->getConnection()->createTable($table);
 
         $installer->endSetup();
+    }
+    
+    protected function addDefaultGuestCustomerToOutlet(SchemaSetupInterface $setup)
+    {
+        $installer = $setup;
+        $tableName = $installer->getTable('sm_xretail_outlet');
+        
+        $installer->getConnection()->addColumn(
+            $tableName,
+            'default_guest_customer_email',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 50,
+                'nullable' => false,
+                'default' => \SM\Customer\Helper\Data::DEFAULT_CUSTOMER_RETAIL_EMAIL,
+                'comment' => 'Location Id',
+                'after' => 'enable_guest_checkout'
+            ]
+        );
     }
 }
