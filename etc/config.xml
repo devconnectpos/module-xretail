@@ -696,5 +696,15 @@
                 <allow_pending_order>0</allow_pending_order>
             </pos>
         </xretail>
+        <csp>
+            <mode>
+                <storefront>
+                    <report_only>1</report_only>
+                </storefront>
+                <admin>
+                    <report_only>1</report_only>
+                </admin>
+            </mode>
+        </csp>
     </default>
 </config>
