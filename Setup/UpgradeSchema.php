@@ -99,6 +99,12 @@ class UpgradeSchema implements UpgradeSchemaInterface
         if (version_compare($context->getVersion(), '0.4.5', '<')) {
             $this->addDefaultGuestCustomerToOutlet($setup);
         }
+        if (version_compare($context->getVersion(), '0.4.6', '<')) {
+            $this->addLanguageSettingToReceipt($setup);
+        }
+        if (version_compare($context->getVersion(), '0.4.7', '<')) {
+            $this->modifyColumnReceiptOrderInfo($setup);
+        }
         
         $installer->endSetup();
     }
@@ -1413,5 +1419,55 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'after' => 'enable_guest_checkout'
             ]
         );
+    }
+
+    protected function addLanguageSettingToReceipt(SchemaSetupInterface $setup)
+    {
+        $installer = $setup;
+        $installer->startSetup();
+
+        $receiptTable = $installer->getTable('sm_xretail_receipt');
+
+        $installer->getConnection()->addColumn(
+            $installer->getTable($receiptTable),
+            'display_two_languages',
+            [
+                'type' => Table::TYPE_INTEGER,
+                'length' => 3,
+                'nullable' => true,
+                'default' => 0,
+                'comment' => 'Display Two Languages'
+            ]
+        );
+
+        $installer->getConnection()->addColumn(
+            $installer->getTable($receiptTable),
+            'second_language',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 3,
+                'nullable' => true,
+                'default' => 'en',
+                'comment' => 'Second Language'
+            ]
+        );
+    }
+    
+    protected function modifyColumnReceiptOrderInfo(SchemaSetupInterface $setup)
+    {
+        $outletTable = $setup->getTable('sm_xretail_receipt');
+        $setup->startSetup();
+        
+        $setup->getConnection()->modifyColumn(
+            $setup->getTable($outletTable),
+            'order_info',
+            [
+                'type' => Table::TYPE_TEXT,
+                ['nullable' => false],
+                'Order Info'
+            ]
+        );
+        
+        $setup->endSetup();
     }
 }

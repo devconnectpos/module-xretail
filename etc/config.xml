@@ -142,6 +142,11 @@
                     <service>SM\Sales\Repositories\OrderManagement</service>
                     <function>saveOrder</function>
                 </save-order>
+                <update-order-item>
+                    <method>Post</method>
+                    <service>SM\Sales\Repositories\OrderItemManagement</service>
+                    <function>updateOrderItem</function>
+                </update-order-item>
                 <take-payment>
                     <method>Post</method>
                     <service>SM\Sales\Repositories\InvoiceManagement</service>
@@ -167,11 +172,6 @@
                     <function>updatePrintTime</function>
                 </save-print-time>
 
-                <invoice>
-                    <method>Post</method>
-                    <service>SM\Sales\Repositories\ShipmentManagement</service>
-                    <function>createClickAndCollectInvoice</function>
-                </invoice>
                 <!--Order History-->
                 <order>
                     <method>Get</method>
