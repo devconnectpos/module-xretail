@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
+    <policies>
+        <policy id="default-src">
+            <values>
+                <value id="connectpos_secured" type="host">https://sales.connectpos.com</value>
+                <value id="connectpos_unsecured" type="host">http://sales.connectpos.com</value>
+                <value id="dijkxhoorn" type="host">https://www.dijkxhoorn.nl</value>
+            </values>
+        </policy>
+    </policies>
+</csp_whitelist>

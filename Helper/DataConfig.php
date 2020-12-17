@@ -35,7 +35,7 @@ class DataConfig extends AbstractHelper
      */
     public function getApiGetCustomAttributes()
     {
-        return false;
+        return true;
     }
 
     /**
