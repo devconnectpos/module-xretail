@@ -147,6 +147,11 @@
                     <service>SM\Sales\Repositories\OrderItemManagement</service>
                     <function>updateOrderItem</function>
                 </update-order-item>
+                <mass-update-order-item>
+                    <method>Post</method>
+                    <service>SM\Sales\Repositories\OrderItemManagement</service>
+                    <function>massUpdateOrderItem</function>
+                </mass-update-order-item>
                 <take-payment>
                     <method>Post</method>
                     <service>SM\Sales\Repositories\InvoiceManagement</service>
