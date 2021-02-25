@@ -85,8 +85,6 @@ class AdvertisementManagement extends ServiceAbstract {
         }
 
         $data->setData('is_active', $is_active);
-//        var_dump($data);
-//        die();
         $advertisement->addData($data->getData())->save();
 
         $searchCriteria = new DataObject(
