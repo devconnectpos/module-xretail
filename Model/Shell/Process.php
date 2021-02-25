@@ -108,7 +108,6 @@ class Process extends DataObject
                    . '/var/log/output.err < /dev/null &';
         //$command = $this->command;
         exec($command, $op);
-        //var_dump(shell_exec($command));die;
 
         if (isset($op[0])) {
             $this->pid = (int)$op[0];
