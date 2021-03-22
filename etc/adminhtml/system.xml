@@ -4,7 +4,7 @@
         <tab id="xretail" translate="label" sortOrder="10">
             <label>CONNECTPOS</label>
         </tab>
-        <section id="xpos" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+        <section id="xpos" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
             <class>separator-top</class>
             <label>ConnectPOS</label>
             <tab>xretail</tab>
