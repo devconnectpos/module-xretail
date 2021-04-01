@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="xpos_order_email_template" label="New Order" file="order_new.html" type="html" module="Magento_Sales" area="frontend"/>
+    <template id="xpos_order_email_guest_template" label="New Order for Guest" file="order_new_guest.html" type="html" module="Magento_Sales" area="frontend"/>
+</config>

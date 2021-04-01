@@ -18,4 +18,8 @@
             <argument name="logger" xsi:type="object">retailLogger</argument>
         </arguments>
     </type>
+
+    <type name="Magento\Sales\Model\Order\Email\Container\OrderIdentity">
+        <plugin name="connectpos-order-confirmation-email" type="SM\XRetail\Plugin\OrderConfirmationEmail" sortOrder="1" disabled="false"/>
+    </type>
 </config>
