@@ -39,6 +39,17 @@
                     <label>Token Expire After (seconds)</label>
                 </field>
             </group>
+            <group id="order_email" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Order Email</label>
+                <field id="enabled" translate="label" type="select" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Send order confirmation email for orders from ConnectPOS</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="template" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>New Order Confirmation Template</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+            </group>
         </section>
     </system>
 </config>

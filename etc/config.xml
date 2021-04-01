@@ -11,6 +11,10 @@
             <advance>
                 <php_run_time>php</php_run_time>
             </advance>
+            <order_email>
+                <enabled>1</enabled>
+                <template>xpos_order_email_template</template>
+            </order_email>
         </xpos>
         <apirouters>
             <router>
