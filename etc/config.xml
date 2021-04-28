@@ -695,6 +695,30 @@
                     <service>SM\Adyen\Repositories\AdyenManagement</service>
                     <function>processRefund</function>
                 </adyen-process-refund>
+
+                <stripe-create-payment-intent>
+                    <method>Post</method>
+                    <service>SM\Stripe\Repositories\StripeManagement</service>
+                    <function>createPaymentIntent</function>
+                </stripe-create-payment-intent>
+
+                <stripe-connection-token>
+                    <method>Post</method>
+                    <service>SM\Stripe\Repositories\StripeManagement</service>
+                    <function>getConnectionToken</function>
+                </stripe-connection-token>
+
+                <stripe-capture-payment>
+                    <method>Post</method>
+                    <service>SM\Stripe\Repositories\StripeManagement</service>
+                    <function>capturePayment</function>
+                </stripe-capture-payment>
+
+                <stripe-refund-payment>
+                    <method>Post</method>
+                    <service>SM\Stripe\Repositories\StripeManagement</service>
+                    <function>refundPayment</function>
+                </stripe-refund-payment>
             </router>
         </apirouters>
         <xretail>
@@ -715,5 +739,11 @@
                 </admin>
             </mode>
         </csp>
+        <xpos>
+            <order_settings>
+                <enable_prefix>0</enable_prefix>
+                <order_prefix>M-</order_prefix>
+            </order_settings>
+        </xpos>
     </default>
 </config>
