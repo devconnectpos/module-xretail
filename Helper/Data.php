@@ -38,7 +38,7 @@ class Data extends AbstractHelper
      * @var \Magento\Config\Model\Config\Loader
      */
     protected $configLoader;
-    
+
     /**
      * @var array
      */
@@ -66,7 +66,7 @@ class Data extends AbstractHelper
     /**
      * @var string
      */
-    public static $API_VERSION = '21.05.06';
+    public static $API_VERSION = '21.05.20';
 	/**
 	 * @var OrderRepositoryInterface
 	 */
@@ -75,7 +75,7 @@ class Data extends AbstractHelper
 	 * @var CollectionFactoryInterface
 	 */
 	private $orderCollectionFactory;
-    
+
     /**
      * Data constructor.
      *
@@ -163,7 +163,7 @@ class Data extends AbstractHelper
 
         return $sums;
     }
-    
+
     /**
      * @param $path
      * @return false|mixed
@@ -335,7 +335,7 @@ class Data extends AbstractHelper
         $timeObject = $timeObject->format('U');
         return $timeObject = date("Y-m-d H:i:s",$timeObject);
     }
-	
+
 	/**
 	 * @param $field
 	 * @param $value
@@ -344,7 +344,7 @@ class Data extends AbstractHelper
 	public function getOrderByField($field, $value)
     {
     	$orderCollection = $this->orderCollectionFactory->create()->addFieldToFilter($field, ['eq' => $value]);
-	    
+
     	return $orderCollection->getFirstItem();
     }
 
