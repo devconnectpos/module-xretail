@@ -91,11 +91,6 @@ class Xretail extends ApiAbstract
             return $this->jsonOutput();
 
         } catch (\Exception $e) {
-            // Log error for better debugging
-            $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/connectpos.log');
-            $logger = new \Zend\Log\Logger();
-            $logger->addWriter($writer);
-            $logger->info($e->getMessage() . "\n" . $e->getTraceAsString());
             return $this->outputError($e->getMessage(), $this->getStatusCode());
         }
     }
