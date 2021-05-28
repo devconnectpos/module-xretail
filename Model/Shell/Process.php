@@ -94,8 +94,8 @@ class Process extends DataObject
             if (isset($config['xpos/advance/php_run_time'])) {
                 $this->command = $config['xpos/advance/php_run_time']['value'] . " " . $this->directoryList->getRoot() . "/" . $this->command;
             } else {
-                $this->logger->debug("User hasn't set php run time");
-                throw new Exception("Can't find php run time ");
+                // Default to php instead of throwing error
+                $this->command = 'php ' . $this->directoryList->getRoot() . "/" . $this->command;
             }
         }
         // fix file permission
