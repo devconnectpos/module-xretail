@@ -727,6 +727,7 @@
                 <sync_when_cart_changes>0</sync_when_cart_changes>
                 <integrate_freegift>none</integrate_freegift>
                 <allow_pending_order>0</allow_pending_order>
+                <enable_secure_request>0</enable_secure_request>
             </pos>
         </xretail>
         <csp>

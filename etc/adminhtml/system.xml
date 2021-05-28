@@ -24,7 +24,6 @@
                 <field id="php_run_time" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Php Run time</label>
                 </field>
-
                 <field id="sync_realtime" translate="label comment" sortOrder="20" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sync Realtime</label>
                     <source_model>SM\XRetail\Config\Model\Realtime</source_model>
@@ -58,6 +57,18 @@
                 </field>
                 <field id="order_prefix" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Order Increment ID prefix</label>
+                </field>
+            </group>
+        </section>
+        <section id="xretail" translate="label" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+            <class>separator-top</class>
+            <label>Other Settings</label>
+            <tab>xretail</tab>
+            <resource>SM_XRetail::pos_configuration</resource>
+            <group id="pos" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="enable_secure_request" translate="label" type="select" sortOrder="0" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Enable Secure Request</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
         </section>
