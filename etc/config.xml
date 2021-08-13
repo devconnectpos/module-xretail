@@ -730,16 +730,6 @@
                 <enable_secure_request>0</enable_secure_request>
             </pos>
         </xretail>
-        <csp>
-            <mode>
-                <storefront>
-                    <report_only>1</report_only>
-                </storefront>
-                <admin>
-                    <report_only>1</report_only>
-                </admin>
-            </mode>
-        </csp>
         <xpos>
             <order_settings>
                 <enable_prefix>0</enable_prefix>
