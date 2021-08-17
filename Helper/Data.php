@@ -66,7 +66,7 @@ class Data extends AbstractHelper
     /**
      * @var string
      */
-    public static $API_VERSION = '21.08.13';
+    public static $API_VERSION = '21.08.17';
 
 	/**
 	 * @var OrderRepositoryInterface
