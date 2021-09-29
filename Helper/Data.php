@@ -14,7 +14,6 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\DateTimeFactory;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
-use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactoryInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -66,12 +65,8 @@ class Data extends AbstractHelper
     /**
      * @var string
      */
-    public static $API_VERSION = '21.09.25';
+    public static $API_VERSION = '21.09.29';
 
-	/**
-	 * @var OrderRepositoryInterface
-	 */
-	private $orderRepository;
 	/**
 	 * @var CollectionFactoryInterface
 	 */
@@ -86,7 +81,6 @@ class Data extends AbstractHelper
      * @param \Magento\Framework\App\Helper\Context $context
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param OrderRepositoryInterface $orderRepository
      * @param CollectionFactoryInterface $orderCollectionFactory
      * @param \Magento\Config\Model\Config\Loader $configLoader
      */
@@ -97,7 +91,6 @@ class Data extends AbstractHelper
         Context $context,
         ObjectManagerInterface $objectManager,
         StoreManagerInterface $storeManager,
-		OrderRepositoryInterface $orderRepository,
 		CollectionFactoryInterface $orderCollectionFactory,
         \Magento\Config\Model\Config\Loader $configLoader
     ) {
@@ -106,7 +99,6 @@ class Data extends AbstractHelper
         $this->timezoneInterface = $timezoneInterface;
         $this->objectManager     = $objectManager;
         $this->storeManager      = $storeManager;
-        $this->orderRepository   = $orderRepository;
         $this->orderCollectionFactory = $orderCollectionFactory;
         parent::__construct($context);
         $this->configLoader = $configLoader;
@@ -334,7 +326,7 @@ class Data extends AbstractHelper
     {
         $timeObject = new \DateTime($time, new \DateTimeZone($this->getTimezoneForStore($storeId)));
         $timeObject = $timeObject->format('U');
-        return $timeObject = date("Y-m-d H:i:s",$timeObject);
+        return date("Y-m-d H:i:s",$timeObject);
     }
 
 	/**
