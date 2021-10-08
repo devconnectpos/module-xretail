@@ -21,92 +21,112 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        $installer = $setup;
-        $installer->startSetup();
         if (version_compare($context->getVersion(), '0.0.8', '<')) {
             $this->addOutletTable($setup);
             $this->addRegister($setup);
         }
+
         if (version_compare($context->getVersion(), '0.1.0', '<')) {
             $this->addReceiptTable($setup);
         }
+
         if (version_compare($context->getVersion(), '0.1.3', '<')) {
             $this->addUserOrderCounterTable($setup);
         }
+
         if (version_compare($context->getVersion(), '0.1.2', '<')) {
             $this->createRoleTable($setup);
             $this->createPermissionTable($setup);
             $this->definePermission($setup);
         }
+
         if (version_compare($context->getVersion(), '0.1.6', '<')) {
             $this->addReceiptTable($setup);
             $this->dummyReceipt($setup);
         }
+
         if (version_compare($context->getVersion(), '0.1.7', '<')) {
             $this->dummyReceipt($setup);
         }
+
         if (version_compare($context->getVersion(), '0.2.3', '<')) {
             $this->modifyColumnHeaderReceipt($setup);
         }
+
         if (version_compare($context->getVersion(), '0.2.4', '<')) {
             $this->addNewColumnMapForOutlet($setup);
         }
+
         if (version_compare($context->getVersion(), '0.2.5', '<')) {
             $this->addNewColumnCustomDateTimeReceipt($setup);
             $this->updateDefaultDateTimeReceipt($setup);
         }
+
         if (version_compare($context->getVersion(), '0.2.6', '<')) {
             $this->addMapInfoOutlet($setup);
         }
+
         if (version_compare($context->getVersion(), '0.3.0', '<')) {
             $this->addCategoryOutletTable($setup);
         }
+
         if (version_compare($context->getVersion(), '0.3.1', '<')) {
             $this->modifyColumnWarehouseOutlet($setup);
         }
+
         if (version_compare($context->getVersion(), '0.3.5', '<')) {
             $this->addMediaLibrary($setup);
             $this->addAdvertisement($setup);
         }
+
         if (version_compare($context->getVersion(), '0.3.6', '<')) {
             $this->modifyOutletColumn($setup);
         }
+
         if (version_compare($context->getVersion(), '0.3.7', '<')) {
             $this->addAllowOutOfStockFieldToOutlet($setup);
         }
+
         if (version_compare($context->getVersion(), '0.3.8', '<')) {
             $this->allowAddressURLLogoReceipt($setup);
             $this->modifyColumnFooterReceipt($setup);
         }
+
         if (version_compare($context->getVersion(), '0.3.9', '<')) {
             $this->addLocationOutlet($setup);
         }
+
         if (version_compare($context->getVersion(), '0.4.0', '<')) {
             $this->modifyColumnCashierIdOutlet($setup);
         }
+
         if (version_compare($context->getVersion(), '0.4.1', '<')) {
             $this->addCustomTaxColumnsToReceipt($setup);
         }
+
         if (version_compare($context->getVersion(), '0.4.2', '<')) {
             $this->addSettingForA4Receipt($setup);
         }
+
         if (version_compare($context->getVersion(), '0.4.3', '<')) {
             $this->addTemplateTaxLabelSetting($setup);
         }
+
         if (version_compare($context->getVersion(), '0.4.4', '<')) {
             $this->addTokenManageTable($setup);
         }
+
         if (version_compare($context->getVersion(), '0.4.5', '<')) {
             $this->addDefaultGuestCustomerToOutlet($setup);
         }
+
         if (version_compare($context->getVersion(), '0.4.6', '<')) {
             $this->addLanguageSettingToReceipt($setup);
         }
+
         if (version_compare($context->getVersion(), '0.4.7', '<')) {
             $this->modifyColumnReceiptOrderInfo($setup);
         }
-        
-        $installer->endSetup();
     }
 
     /**
@@ -114,19 +134,20 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function addCategoryOutletTable(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        $installer->getConnection()->dropColumn($installer->getTable('sm_xretail_outlet'), 'category_id');
-        $installer->getConnection()->addColumn(
-            $installer->getTable('sm_xretail_outlet'),
-            'category_id',
-            [
-                'type'    => Table::TYPE_INTEGER,
-                'comment' => 'category id',
-            ]
-        );
+        $setup->startSetup();
 
-        $installer->endSetup();
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sm_xretail_outlet'), 'category_id')) {
+            $setup->getConnection()->addColumn(
+                $setup->getTable('sm_xretail_outlet'),
+                'category_id',
+                [
+                    'type'    => Table::TYPE_INTEGER,
+                    'comment' => 'category id',
+                ]
+            );
+        }
+
+        $setup->endSetup();
     }
 
     /**
@@ -136,11 +157,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function addOutletTable(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        $setup->getConnection()->dropTable($setup->getTable('sm_xretail_outlet'));
-        $table = $installer->getConnection()->newTable(
-            $installer->getTable('sm_xretail_outlet')
+        $setup->startSetup();
+
+        if ($setup->getConnection()->isTableExists($setup->getTable('sm_xretail_outlet'))) {
+            $setup->endSetup();
+
+            return;
+        }
+
+        $table = $setup->getConnection()->newTable(
+            $setup->getTable('sm_xretail_outlet')
         )->addColumn(
             'id',
             Table::TYPE_INTEGER,
@@ -244,9 +270,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
             ['nullable' => false, 'default' => '1',],
             'Is Active'
         );
-        $installer->getConnection()->createTable($table);
-
-        $installer->endSetup();
+        $setup->getConnection()->createTable($table);
+        $setup->endSetup();
     }
 
     /**
@@ -256,11 +281,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function addRegister(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        $setup->getConnection()->dropTable($setup->getTable('sm_xretail_register'));
-        $table = $installer->getConnection()->newTable(
-            $installer->getTable('sm_xretail_register')
+        $setup->startSetup();
+
+        if ($setup->getConnection()->isTableExists($setup->getTable('sm_xretail_register'))) {
+            $setup->endSetup();
+
+            return;
+        }
+
+        $table = $setup->getConnection()->newTable(
+            $setup->getTable('sm_xretail_register')
         )->addColumn(
             'id',
             Table::TYPE_INTEGER,
@@ -304,18 +334,17 @@ class UpgradeSchema implements UpgradeSchemaInterface
             ['nullable' => false, 'default' => '1',],
             'Is Always Print Receipt'
         );
-        $installer->getConnection()->createTable($table);
+        $setup->getConnection()->createTable($table);
 
-        $installer->getConnection()->addForeignKey(
-            $installer->getFkName('id', 'outlet_id', $installer->getTable('sm_xretail_outlet'), 'id'),
-            $installer->getTable('sm_xretail_register'),
+        $setup->getConnection()->addForeignKey(
+            $setup->getFkName('id', 'outlet_id', $setup->getTable('sm_xretail_outlet'), 'id'),
+            $setup->getTable('sm_xretail_register'),
             'outlet_id',
-            $installer->getTable('sm_xretail_outlet'),
+            $setup->getTable('sm_xretail_outlet'),
             'id',
             Table::ACTION_CASCADE
         );
-
-        $installer->endSetup();
+        $setup->endSetup();
     }
 
     /**
@@ -325,11 +354,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function addUserOrderCounterTable(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        $setup->getConnection()->dropTable($setup->getTable('sm_xretail_userordercounter'));
-        $table = $installer->getConnection()->newTable(
-            $installer->getTable('sm_xretail_userordercounter')
+        $setup->startSetup();
+
+        if ($setup->getConnection()->isTableExists($setup->getTable('sm_xretail_userordercounter'))) {
+            $setup->endSetup();
+
+            return;
+        }
+
+        $table = $setup->getConnection()->newTable(
+            $setup->getTable('sm_xretail_userordercounter')
         )->addColumn(
             'id',
             Table::TYPE_INTEGER,
@@ -361,9 +395,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
             ['nullable' => true, 'unsigned' => true,],
             'Order Count'
         );
-        $installer->getConnection()->createTable($table);
-
-        $installer->endSetup();
+        $setup->getConnection()->createTable($table);
+        $setup->endSetup();
     }
 
     /**
@@ -373,11 +406,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function addReceiptTable(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        $setup->getConnection()->dropTable($setup->getTable('sm_xretail_receipt'));
-        $table = $installer->getConnection()->newTable(
-            $installer->getTable('sm_xretail_receipt')
+        $setup->startSetup();
+
+        if ($setup->getConnection()->isTableExists($setup->getTable('sm_xretail_receipt'))) {
+            $setup->endSetup();
+
+            return;
+        }
+
+        $table = $setup->getConnection()->newTable(
+            $setup->getTable('sm_xretail_receipt')
         )->addColumn(
             'id',
             Table::TYPE_INTEGER,
@@ -493,9 +531,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
             ['nullable' => false,],
             'default receipt'
         );
-        $installer->getConnection()->createTable($table);
-
-        $installer->endSetup();
+        $setup->getConnection()->createTable($table);
+        $setup->endSetup();
     }
 
     /**
@@ -505,11 +542,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function createRoleTable(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        //START table setup
-        $table = $installer->getConnection()->newTable(
-            $installer->getTable('sm_role')
+        $setup->startSetup();
+
+        if ($setup->getConnection()->isTableExists($setup->getTable('sm_role'))) {
+            $setup->endSetup();
+
+            return;
+        }
+
+        $table = $setup->getConnection()->newTable(
+            $setup->getTable('sm_role')
         )->addColumn(
             'id',
             Table::TYPE_INTEGER,
@@ -541,8 +583,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
             ['nullable' => false, 'default' => '1',],
             'Is Active'
         );
-        $installer->getConnection()->createTable($table);
-        $installer->endSetup();
+        $setup->getConnection()->createTable($table);
+        $setup->endSetup();
     }
 
     /**
@@ -552,11 +594,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function createPermissionTable(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        //START table setup
-        $table = $installer->getConnection()->newTable(
-            $installer->getTable('sm_permission')
+        $setup->startSetup();
+
+        if ($setup->getConnection()->isTableExists($setup->getTable('sm_permission'))) {
+            $setup->endSetup();
+
+            return;
+        }
+
+        $table = $setup->getConnection()->newTable(
+            $setup->getTable('sm_permission')
         )->addColumn(
             'id',
             Table::TYPE_INTEGER,
@@ -600,16 +647,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
             ['nullable' => false, 'default' => '1',],
             'Is Active'
         );
-        $installer->getConnection()->createTable($table);
-        $installer->getConnection()->addForeignKey(
-            $installer->getFkName('id', 'role_id', $installer->getTable('sm_role'), 'id'),
-            $installer->getTable('sm_permission'),
+        $setup->getConnection()->createTable($table);
+        $setup->getConnection()->addForeignKey(
+            $setup->getFkName('id', 'role_id', $setup->getTable('sm_role'), 'id'),
+            $setup->getTable('sm_permission'),
             'role_id',
-            $installer->getTable('sm_role'),
+            $setup->getTable('sm_role'),
             'id',
             Table::ACTION_CASCADE
         );
-        $installer->endSetup();
+        $setup->endSetup();
     }
 
     /**
@@ -617,8 +664,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     public function definePermission(SchemaSetupInterface $setup)
     {
-        $roleTable       = $setup->getTable('sm_role');
+        $setup->startSetup();
+        $roleTable = $setup->getTable('sm_role');
         $permissionTable = $setup->getTable('sm_permission');
+
         $setup->getConnection()->truncateTable($roleTable);
         $setup->getConnection()->truncateTable($permissionTable);
 
@@ -639,9 +688,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 ],
                 [
                     'name' => "Cashier",
-                ]
+                ],
             ]
         );
+
+        $setup->endSetup();
     }
 
     /**
@@ -649,6 +700,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function dummyReceipt(SchemaSetupInterface $setup)
     {
+        $setup->startSetup();
+
         $receiptTable = $setup->getTable('sm_xretail_receipt');
         $setup->getConnection()->truncateTable($receiptTable);
         $setup->getConnection()->insertArray(
@@ -666,33 +719,35 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'barcode_symbology',
                 'enable_power_text',
                 'name',
-                'is_default'
+                'is_default',
             ],
             [
                 [
-                    "customer_info"      => "1",
-                    "order_info"         => json_encode(
+                    "customer_info"       => "1",
+                    "order_info"          => json_encode(
                         [
                             "shipping_address"  => true,
                             "sales_person"      => true,
-                            "discount_shipment" => true
+                            "discount_shipment" => true,
                         ],
                         true
                     ),
-                    "row_total_incl_tax" => true,
-                    "logo_image_status" => true,
-                    "footer_image_status" =>true,
-                    "subtotal_incl_tax"  => true,
-                    "header"             => "<h2>ConnectPOS</h2>",
-                    "footer"             => "Thank you for shopping!",
-                    "enable_barcode"     => true,
-                    "barcode_symbology"  => "CODE128",
-                    "enable_power_text"  => true,
-                    "name"               => "ConnectPOS default receipt",
-                    "is_default"         => true,
-                ]
+                    "row_total_incl_tax"  => true,
+                    "logo_image_status"   => true,
+                    "footer_image_status" => true,
+                    "subtotal_incl_tax"   => true,
+                    "header"              => "<h2>ConnectPOS</h2>",
+                    "footer"              => "Thank you for shopping!",
+                    "enable_barcode"      => true,
+                    "barcode_symbology"   => "CODE128",
+                    "enable_power_text"   => true,
+                    "name"                => "ConnectPOS default receipt",
+                    "is_default"          => true,
+                ],
             ]
         );
+
+        $setup->endSetup();
     }
 
     /**
@@ -700,6 +755,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function modifyColumnHeaderReceipt(SchemaSetupInterface $setup)
     {
+        $setup->startSetup();
+
         $receiptTable = $setup->getTable('sm_xretail_receipt');
         $setup->startSetup();
 
@@ -708,10 +765,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             'header',
             'header',
             [
-                'type' => Table::TYPE_TEXT,
+                'type'   => Table::TYPE_TEXT,
                 'length' => 255000,
                 ['nullable' => false,],
-                'Header'
+                'Header',
             ]
         );
 
@@ -723,27 +780,27 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function addNewColumnMapForOutlet(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
+        $setup->startSetup();
 
-        $installer->getConnection()->addColumn(
-            $installer->getTable('sm_xretail_outlet'),
+        $setup->getConnection()->addColumn(
+            $setup->getTable('sm_xretail_outlet'),
             'place_id',
             [
-                'type' => Table::TYPE_TEXT,
-                'length' => 25500,
+                'type'     => Table::TYPE_TEXT,
+                'length'   => 25500,
                 'nullable' => false,
-                'comment' => 'Place ID Google Map'
+                'comment'  => 'Place ID Google Map',
             ]
         );
 
-        $installer->getConnection()->addColumn(
-            $installer->getTable('sm_xretail_outlet'),
+        $setup->getConnection()->addColumn(
+            $setup->getTable('sm_xretail_outlet'),
             'url',
             [
-                'type' => Table::TYPE_TEXT,
-                'length' => 25500,
+                'type'     => Table::TYPE_TEXT,
+                'length'   => 25500,
                 'nullable' => false,
-                'comment' => 'URL Google Map'
+                'comment'  => 'URL Google Map',
             ]
         );
 
@@ -755,60 +812,60 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function addNewColumnCustomDateTimeReceipt(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
+        $setup->startSetup();
 
-        $installer->getConnection()->addColumn(
-            $installer->getTable('sm_xretail_receipt'),
+        $setup->getConnection()->addColumn(
+            $setup->getTable('sm_xretail_receipt'),
             'day_of_week',
             [
                 'type'     => Table::TYPE_TEXT,
                 'length'   => 25500,
                 'nullable' => false,
-                'comment'  => 'Day of Week'
+                'comment'  => 'Day of Week',
             ]
         );
 
-        $installer->getConnection()->addColumn(
-            $installer->getTable('sm_xretail_receipt'),
+        $setup->getConnection()->addColumn(
+            $setup->getTable('sm_xretail_receipt'),
             'day_of_month',
             [
                 'type'     => Table::TYPE_TEXT,
                 'length'   => 25500,
                 'nullable' => false,
-                'comment'  => 'Day of Month'
+                'comment'  => 'Day of Month',
             ]
         );
 
-        $installer->getConnection()->addColumn(
-            $installer->getTable('sm_xretail_receipt'),
+        $setup->getConnection()->addColumn(
+            $setup->getTable('sm_xretail_receipt'),
             'month',
             [
                 'type'     => Table::TYPE_TEXT,
                 'length'   => 25500,
                 'nullable' => false,
-                'comment'  => 'Month'
+                'comment'  => 'Month',
             ]
         );
 
-        $installer->getConnection()->addColumn(
-            $installer->getTable('sm_xretail_receipt'),
+        $setup->getConnection()->addColumn(
+            $setup->getTable('sm_xretail_receipt'),
             'year',
             [
                 'type'     => Table::TYPE_TEXT,
                 'length'   => 25500,
                 'nullable' => false,
-                'comment'  => 'Year'
+                'comment'  => 'Year',
             ]
         );
 
-        $installer->getConnection()->addColumn(
-            $installer->getTable('sm_xretail_receipt'),
+        $setup->getConnection()->addColumn(
+            $setup->getTable('sm_xretail_receipt'),
             'time',
             [
                 'type'     => Table::TYPE_TEXT,
                 'length'   => 25500,
                 'nullable' => false,
-                'comment'  => 'Time'
+                'comment'  => 'Time',
             ]
         );
 
@@ -820,10 +877,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function updateDefaultDateTimeReceipt(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
+        $setup->startSetup();
 
-        $installer->getConnection()->update(
-            $installer->getTable('sm_xretail_receipt'),
+        $setup->getConnection()->update(
+            $setup->getTable('sm_xretail_receipt'),
             [
                 'day_of_week'  => 'dddd',
                 'day_of_month' => 'Do',
@@ -833,6 +890,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
             ],
             ['day_of_week = ?' => null]
         );
+
+        $setup->endSetup();
     }
 
     /**
@@ -840,72 +899,85 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function addMapInfoOutlet(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
+        $setup->startSetup();
 
-        $installer->getConnection()->addColumn(
-            $installer->getTable('sm_xretail_outlet'),
+        $setup->getConnection()->addColumn(
+            $setup->getTable('sm_xretail_outlet'),
             'lat',
             [
-                'type' => Table::TYPE_TEXT,
-                'length' => 255000,
+                'type'     => Table::TYPE_TEXT,
+                'length'   => 255000,
                 'nullable' => false,
-                'comment' => 'Latitude Google Map'
+                'comment'  => 'Latitude Google Map',
             ]
         );
 
-        $installer->getConnection()->addColumn(
-            $installer->getTable('sm_xretail_outlet'),
+        $setup->getConnection()->addColumn(
+            $setup->getTable('sm_xretail_outlet'),
             'lng',
             [
-                'type' => Table::TYPE_TEXT,
-                'length' => 255000,
+                'type'     => Table::TYPE_TEXT,
+                'length'   => 255000,
                 'nullable' => false,
-                'comment' => 'Longitude Google Map'
+                'comment'  => 'Longitude Google Map',
             ]
         );
 
-        $installer->getConnection()->addColumn(
-            $installer->getTable('sm_xretail_outlet'),
+        $setup->getConnection()->addColumn(
+            $setup->getTable('sm_xretail_outlet'),
             'allow_click_and_collect',
             [
-                'type' =>  Table::TYPE_SMALLINT,
-                'length' => 1,
+                'type'     => Table::TYPE_SMALLINT,
+                'length'   => 1,
                 'nullable' => false,
-                'default' => '1',
-                'comment' => 'Allow click and collect'
+                'default'  => '1',
+                'comment'  => 'Allow click and collect',
             ]
         );
 
         $setup->endSetup();
     }
 
+    /**
+     * @param SchemaSetupInterface $setup
+     */
     protected function modifyColumnWarehouseOutlet(SchemaSetupInterface $setup)
     {
-        $outletTable = $setup->getTable('sm_xretail_outlet');
         $setup->startSetup();
 
+        $outletTable = $setup->getTable('sm_xretail_outlet');
         $setup->getConnection()->changeColumn(
             $setup->getTable($outletTable),
             'warehouse_id',
             'warehouse_id',
             [
-                'type' => Table::TYPE_TEXT,
+                'type'   => Table::TYPE_TEXT,
                 'length' => 255000,
                 ['nullable' => false],
-                'Warehouse ID'
+                'Warehouse ID',
             ]
         );
 
         $setup->endSetup();
     }
 
+    /**
+     * @param SchemaSetupInterface $setup
+     *
+     * @throws \Zend_Db_Exception
+     */
     protected function addMediaLibrary(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        $setup->getConnection()->dropTable($setup->getTable('sm_media_library'));
-        $table = $installer->getConnection()->newTable(
-            $installer->getTable('sm_media_library')
+        $setup->startSetup();
+
+        if ($setup->getConnection()->isTableExists($setup->getTable('sm_media_library'))) {
+            $setup->endSetup();
+
+            return;
+        }
+
+        $table = $setup->getConnection()->newTable(
+            $setup->getTable('sm_media_library')
         )->addColumn(
             'id',
             Table::TYPE_INTEGER,
@@ -949,18 +1021,27 @@ class UpgradeSchema implements UpgradeSchemaInterface
             ['nullable' => false, 'default' => '1'],
             'Is Active'
         );
-        $installer->getConnection()->createTable($table);
-
-        $installer->endSetup();
+        $setup->getConnection()->createTable($table);
+        $setup->endSetup();
     }
 
+    /**
+     * @param SchemaSetupInterface $setup
+     *
+     * @throws \Zend_Db_Exception
+     */
     protected function addAdvertisement(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        $setup->getConnection()->dropTable($setup->getTable('sm_advertisement'));
-        $table = $installer->getConnection()->newTable(
-            $installer->getTable('sm_advertisement')
+        $setup->startSetup();
+
+        if ($setup->getConnection()->isTableExists($setup->getTable('sm_advertisement'))) {
+            $setup->endSetup();
+
+            return;
+        }
+
+        $table = $setup->getConnection()->newTable(
+            $setup->getTable('sm_advertisement')
         )->addColumn(
             'id',
             Table::TYPE_INTEGER,
@@ -1022,62 +1103,66 @@ class UpgradeSchema implements UpgradeSchemaInterface
             ['nullable' => false, 'default' => '1'],
             'Is Active'
         );
-        $installer->getConnection()->createTable($table);
-
-        $installer->endSetup();
+        $setup->getConnection()->createTable($table);
+        $setup->endSetup();
     }
 
+    /**
+     * @param SchemaSetupInterface $setup
+     */
     protected function modifyOutletColumn(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
+        $setup->startSetup();
 
-        $installer
+        $setup
             ->getConnection()
             ->modifyColumn(
-                $installer->getTable('sm_xretail_outlet'),
+                $setup->getTable('sm_xretail_outlet'),
                 'lat',
                 [
                     'type'     => Table::TYPE_TEXT,
                     'length'   => 255000,
                     'nullable' => false,
-                    'comment'  => 'Latitude Google Map'
+                    'comment'  => 'Latitude Google Map',
                 ]
             );
 
-        $installer
+        $setup
             ->getConnection()
             ->modifyColumn(
-                $installer->getTable('sm_xretail_outlet'),
+                $setup->getTable('sm_xretail_outlet'),
                 'lng',
                 [
                     'type'     => Table::TYPE_TEXT,
                     'length'   => 255000,
                     'nullable' => false,
-                    'comment'  => 'Longitude Google Map'
+                    'comment'  => 'Longitude Google Map',
                 ]
             );
 
-        $installer->endSetup();
+        $setup->endSetup();
     }
 
+    /**
+     * @param SchemaSetupInterface $setup
+     */
     protected function addAllowOutOfStockFieldToOutlet(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        $tableName = $installer->getTable('sm_xretail_outlet');
-        $installer->getConnection()
-                  ->addColumn(
-                      $tableName,
-                      'allow_out_of_stock',
-                      [
-                          'type'     => Table::TYPE_SMALLINT,
-                          'length'   => 1,
-                          'nullable' => false,
-                          'default' => 1,
-                          'comment'  => 'Allow placing order with out of stock products'
-                      ]
-                  );
+        $setup->startSetup();
+        $tableName = $setup->getTable('sm_xretail_outlet');
+        $setup->getConnection()
+            ->addColumn(
+                $tableName,
+                'allow_out_of_stock',
+                [
+                    'type'     => Table::TYPE_SMALLINT,
+                    'length'   => 1,
+                    'nullable' => false,
+                    'default'  => 1,
+                    'comment'  => 'Allow placing order with out of stock products',
+                ]
+            );
+        $setup->endSetup();
     }
 
     /**
@@ -1085,36 +1170,35 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function allowAddressURLLogoReceipt(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
+        $setup->startSetup();
 
-        $installer
+        $setup
             ->getConnection()
             ->addColumn(
-                $installer->getTable('sm_xretail_receipt'),
+                $setup->getTable('sm_xretail_receipt'),
                 'insert_header_logo',
                 [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255,
+                    'type'    => Table::TYPE_TEXT,
+                    'length'  => 255,
                     ['nullable' => false, 'default' => 'upload'],
-                    'comment'  => 'Insert Header Logo'
+                    'comment' => 'Insert Header Logo',
                 ]
             );
 
-        $installer
+        $setup
             ->getConnection()
             ->addColumn(
-                $installer->getTable('sm_xretail_receipt'),
+                $setup->getTable('sm_xretail_receipt'),
                 'insert_footer_logo',
                 [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255,
+                    'type'    => Table::TYPE_TEXT,
+                    'length'  => 255,
                     ['nullable' => false, 'default' => 'upload'],
-                    'comment'  => 'Insert Footer Logo'
+                    'comment' => 'Insert Footer Logo',
                 ]
             );
 
-        $installer->endSetup();
+        $setup->endSetup();
     }
 
     /**
@@ -1122,29 +1206,31 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function modifyColumnFooterReceipt(SchemaSetupInterface $setup)
     {
-        $receiptTable = $setup->getTable('sm_xretail_receipt');
         $setup->startSetup();
+        $receiptTable = $setup->getTable('sm_xretail_receipt');
 
         $setup->getConnection()->modifyColumn(
             $setup->getTable($receiptTable),
             'footer',
             [
-                'type' => Table::TYPE_TEXT,
+                'type'   => Table::TYPE_TEXT,
                 'length' => 255000,
                 ['nullable' => false,],
-                'Footer'
+                'Footer',
             ]
         );
 
         $setup->endSetup();
     }
 
+    /**
+     * @param SchemaSetupInterface $setup
+     */
     protected function addLocationOutlet(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        $tableName = $installer->getTable('sm_xretail_outlet');
-        $installer->getConnection()
+        $setup->startSetup();
+        $tableName = $setup->getTable('sm_xretail_outlet');
+        $setup->getConnection()
             ->addColumn(
                 $tableName,
                 'location_id',
@@ -1152,9 +1238,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     'type'     => Table::TYPE_TEXT,
                     'length'   => 255,
                     'nullable' => false,
-                    'comment'  => 'Location Id'
+                    'comment'  => 'Location Id',
                 ]
             );
+        $setup->endSetup();
     }
 
     /**
@@ -1162,53 +1249,57 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function modifyColumnCashierIdOutlet(SchemaSetupInterface $setup)
     {
-        $outletTable = $setup->getTable('sm_xretail_outlet');
         $setup->startSetup();
+        $outletTable = $setup->getTable('sm_xretail_outlet');
 
         $setup->getConnection()->modifyColumn(
             $setup->getTable($outletTable),
             'cashier_ids',
             [
-                'type' => Table::TYPE_TEXT,
+                'type'   => Table::TYPE_TEXT,
                 'length' => 255000,
                 ['nullable' => false],
-                'Cashier Ids'
+                'Cashier Ids',
             ]
         );
 
         $setup->endSetup();
     }
-    
+
+    /**
+     * @param SchemaSetupInterface $setup
+     */
     protected function addCustomTaxColumnsToReceipt(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        
-        $receiptTable = $installer->getTable('sm_xretail_receipt');
-        
-        $installer->getConnection()->addColumn(
-            $installer->getTable($receiptTable),
+        $setup->startSetup();
+
+        $receiptTable = $setup->getTable('sm_xretail_receipt');
+
+        $setup->getConnection()->addColumn(
+            $setup->getTable($receiptTable),
             'display_custom_tax',
             [
-                'type' => Table::TYPE_INTEGER,
-                'length' => 3,
+                'type'     => Table::TYPE_INTEGER,
+                'length'   => 3,
                 'nullable' => true,
-                'default' => 0,
-                'comment' => 'Is Display Custom Tax'
+                'default'  => 0,
+                'comment'  => 'Is Display Custom Tax',
             ]
         );
-        
-        $installer->getConnection()->addColumn(
-            $installer->getTable($receiptTable),
+
+        $setup->getConnection()->addColumn(
+            $setup->getTable($receiptTable),
             'custom_tax_multiplier',
             [
-                'type' => Table::TYPE_DECIMAL,
-                'length' => '12,9',
+                'type'     => Table::TYPE_DECIMAL,
+                'length'   => '12,9',
                 'nullable' => true,
-                'default' => 0,
-                'comment' => 'Custom Tax Multiplier'
+                'default'  => 0,
+                'comment'  => 'Custom Tax Multiplier',
             ]
         );
+
+        $setup->endSetup();
     }
 
     /**
@@ -1216,139 +1307,142 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function addSettingForA4Receipt(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        $tableName = $installer->getTable('sm_xretail_receipt');
+        $setup->startSetup();
+        $tableName = $setup->getTable('sm_xretail_receipt');
 
-        $installer->getConnection()
-                  ->addColumn(
-                      $tableName,
-                      'paper_size',
-                      [
-                          'type'     => Table::TYPE_TEXT,
-                          'length'   => 255,
-                          'nullable' => false,
-                          'comment'  => 'Paper Size'
-                      ]
-                  );
+        $setup->getConnection()
+            ->addColumn(
+                $tableName,
+                'paper_size',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255,
+                    'nullable' => false,
+                    'comment'  => 'Paper Size',
+                ]
+            );
 
-        $installer->getConnection()
-                  ->addColumn(
-                      $tableName,
-                      'style_customer_info',
-                      [
-                          'type'     => Table::TYPE_TEXT,
-                          'length'   => 255,
-                          'nullable' => false,
-                          'comment'  => 'Style For Customer Info'
-                      ]
-                  );
+        $setup->getConnection()
+            ->addColumn(
+                $tableName,
+                'style_customer_info',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255,
+                    'nullable' => false,
+                    'comment'  => 'Style For Customer Info',
+                ]
+            );
 
-        $installer->getConnection()
-                  ->addColumn(
-                      $tableName,
-                      'store_info',
-                      [
-                          'type'     => Table::TYPE_TEXT,
-                          'length'   => 255,
-                          'nullable' => false,
-                          'comment'  => 'Store Info'
-                      ]
-                  );
+        $setup->getConnection()
+            ->addColumn(
+                $tableName,
+                'store_info',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255,
+                    'nullable' => false,
+                    'comment'  => 'Store Info',
+                ]
+            );
 
-        $installer->getConnection()
-                  ->addColumn(
-                      $tableName,
-                      'store_phone',
-                      [
-                          'type'     => Table::TYPE_TEXT,
-                          'length'   => 255,
-                          'nullable' => false,
-                          'comment'  => 'Store Phone'
-                      ]
-                  );
+        $setup->getConnection()
+            ->addColumn(
+                $tableName,
+                'store_phone',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255,
+                    'nullable' => false,
+                    'comment'  => 'Store Phone',
+                ]
+            );
 
-        $installer->getConnection()
-                  ->addColumn(
-                      $tableName,
-                      'store_website',
-                      [
-                          'type'     => Table::TYPE_TEXT,
-                          'length'   => 255,
-                          'nullable' => false,
-                          'comment'  => 'Store Website'
-                      ]
-                  );
+        $setup->getConnection()
+            ->addColumn(
+                $tableName,
+                'store_website',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255,
+                    'nullable' => false,
+                    'comment'  => 'Store Website',
+                ]
+            );
 
-        $installer->getConnection()
-                  ->addColumn(
-                      $tableName,
-                      'store_email',
-                      [
-                          'type'     => Table::TYPE_TEXT,
-                          'length'   => 255,
-                          'nullable' => false,
-                          'comment'  => 'Store Email'
-                      ]
-                  );
+        $setup->getConnection()
+            ->addColumn(
+                $tableName,
+                'store_email',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255,
+                    'nullable' => false,
+                    'comment'  => 'Store Email',
+                ]
+            );
 
-        $installer->getConnection()
-                  ->addColumn(
-                      $tableName,
-                      'enable_terms_and_conditions',
-                      [
-                          'type'     => Table::TYPE_TEXT,
-                          'length'   => 255,
-                          'nullable' => false,
-                          'comment'  => 'Terms and Conditions of Sale'
-                      ]
-                  );
+        $setup->getConnection()
+            ->addColumn(
+                $tableName,
+                'enable_terms_and_conditions',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255,
+                    'nullable' => false,
+                    'comment'  => 'Terms and Conditions of Sale',
+                ]
+            );
 
-        $installer->getConnection()
-                  ->addColumn(
-                      $tableName,
-                      'terms_and_conditions',
-                      [
-                          'type'     => Table::TYPE_TEXT,
-                          'length'   => 255000,
-                          'nullable' => false,
-                          'comment'  => 'Terms and Conditions Content'
-                      ]
-                  );
+        $setup->getConnection()
+            ->addColumn(
+                $tableName,
+                'terms_and_conditions',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255000,
+                    'nullable' => false,
+                    'comment'  => 'Terms and Conditions Content',
+                ]
+            );
 
-        $installer->getConnection()
-                  ->addColumn(
-                      $tableName,
-                      'enable_customer_signature',
-                      [
-                          'type'     => Table::TYPE_TEXT,
-                          'length'   => 255,
-                          'nullable' => false,
-                          'comment'  => 'Customer Signature'
-                      ]
-                  );
+        $setup->getConnection()
+            ->addColumn(
+                $tableName,
+                'enable_customer_signature',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'length'   => 255,
+                    'nullable' => false,
+                    'comment'  => 'Customer Signature',
+                ]
+            );
 
-        $installer->endSetup();
+        $setup->endSetup();
     }
-    
+
+    /**
+     * @param SchemaSetupInterface $setup
+     */
     protected function addTemplateTaxLabelSetting(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
-        
-        $receiptTable = $installer->getTable('sm_xretail_receipt');
-        
-        $installer->getConnection()->addColumn(
-            $installer->getTable($receiptTable),
+        $setup->startSetup();
+
+        $receiptTable = $setup->getTable('sm_xretail_receipt');
+
+        $setup->getConnection()->addColumn(
+            $setup->getTable($receiptTable),
             'custom_tax_label',
             [
-                'type' => Table::TYPE_TEXT,
-                'length' => 20,
+                'type'     => Table::TYPE_TEXT,
+                'length'   => 20,
                 'nullable' => true,
-                'default' => 'Tax',
-                'comment' => 'Custom Tax Label'
+                'default'  => 'Tax',
+                'comment'  => 'Custom Tax Label',
             ]
         );
+
+        $setup->endSetup();
     }
 
     /**
@@ -1358,14 +1452,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected function addTokenManageTable(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
+        $setup->startSetup();
 
-        if ($setup->getConnection()->isTableExists($installer->getTable('sm_token'))) {
-            $installer->endSetup();
+        if ($setup->getConnection()->isTableExists($setup->getTable('sm_token'))) {
+            $setup->endSetup();
+
+            return;
         }
-        $table = $installer->getConnection()->newTable(
-            $installer->getTable('sm_token')
+
+        $table = $setup->getConnection()->newTable(
+            $setup->getTable('sm_token')
         )->addColumn(
             'id',
             Table::TYPE_INTEGER,
@@ -1397,77 +1493,88 @@ class UpgradeSchema implements UpgradeSchemaInterface
             ['nullable' => false, 'default' => Table::TIMESTAMP_INIT],
             'Created At'
         );
-        $installer->getConnection()->createTable($table);
+        $setup->getConnection()->createTable($table);
 
-        $installer->endSetup();
+        $setup->endSetup();
     }
-    
+
+    /**
+     * @param SchemaSetupInterface $setup
+     */
     protected function addDefaultGuestCustomerToOutlet(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $tableName = $installer->getTable('sm_xretail_outlet');
-        
-        $installer->getConnection()->addColumn(
+        $setup->startSetup();
+        $tableName = $setup->getTable('sm_xretail_outlet');
+
+        $setup->getConnection()->addColumn(
             $tableName,
             'default_guest_customer_email',
             [
-                'type' => Table::TYPE_TEXT,
-                'length' => 50,
+                'type'     => Table::TYPE_TEXT,
+                'length'   => 50,
                 'nullable' => false,
-                'default' => \SM\Customer\Helper\Data::DEFAULT_CUSTOMER_RETAIL_EMAIL,
-                'comment' => 'Location Id',
-                'after' => 'enable_guest_checkout'
+                'default'  => \SM\Customer\Helper\Data::DEFAULT_CUSTOMER_RETAIL_EMAIL,
+                'comment'  => 'Location Id',
+                'after'    => 'enable_guest_checkout',
             ]
         );
+        $setup->endSetup();
     }
 
+    /**
+     * @param SchemaSetupInterface $setup
+     */
     protected function addLanguageSettingToReceipt(SchemaSetupInterface $setup)
     {
-        $installer = $setup;
-        $installer->startSetup();
+        $setup->startSetup();
 
-        $receiptTable = $installer->getTable('sm_xretail_receipt');
+        $receiptTable = $setup->getTable('sm_xretail_receipt');
 
-        $installer->getConnection()->addColumn(
-            $installer->getTable($receiptTable),
+        $setup->getConnection()->addColumn(
+            $setup->getTable($receiptTable),
             'display_two_languages',
             [
-                'type' => Table::TYPE_INTEGER,
-                'length' => 3,
+                'type'     => Table::TYPE_INTEGER,
+                'length'   => 3,
                 'nullable' => true,
-                'default' => 0,
-                'comment' => 'Display Two Languages'
+                'default'  => 0,
+                'comment'  => 'Display Two Languages',
             ]
         );
 
-        $installer->getConnection()->addColumn(
-            $installer->getTable($receiptTable),
+        $setup->getConnection()->addColumn(
+            $setup->getTable($receiptTable),
             'second_language',
             [
-                'type' => Table::TYPE_TEXT,
-                'length' => 3,
+                'type'     => Table::TYPE_TEXT,
+                'length'   => 3,
                 'nullable' => true,
-                'default' => 'en',
-                'comment' => 'Second Language'
+                'default'  => 'en',
+                'comment'  => 'Second Language',
             ]
         );
+
+        $setup->endSetup();
     }
-    
+
+    /**
+     * @param SchemaSetupInterface $setup
+     */
     protected function modifyColumnReceiptOrderInfo(SchemaSetupInterface $setup)
     {
-        $outletTable = $setup->getTable('sm_xretail_receipt');
         $setup->startSetup();
-        
+        $outletTable = $setup->getTable('sm_xretail_receipt');
+
         $setup->getConnection()->modifyColumn(
             $setup->getTable($outletTable),
             'order_info',
             [
                 'type' => Table::TYPE_TEXT,
                 ['nullable' => false],
-                'Order Info'
+                'Order Info',
             ]
         );
-        
+
         $setup->endSetup();
     }
 }
