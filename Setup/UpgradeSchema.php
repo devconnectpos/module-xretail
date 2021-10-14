@@ -10,6 +10,7 @@ use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @codeCoverageIgnore
@@ -49,105 +50,44 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->dummyReceipt($setup);
         }
 
-        if (version_compare($context->getVersion(), '0.2.3', '<')) {
-            $this->modifyColumnHeaderReceipt($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.2.4', '<')) {
-            $this->addNewColumnMapForOutlet($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.2.5', '<')) {
-            $this->addNewColumnCustomDateTimeReceipt($setup);
-            $this->updateDefaultDateTimeReceipt($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.2.6', '<')) {
-            $this->addMapInfoOutlet($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.3.0', '<')) {
-            $this->addCategoryOutletTable($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.3.1', '<')) {
-            $this->modifyColumnWarehouseOutlet($setup);
-        }
-
         if (version_compare($context->getVersion(), '0.3.5', '<')) {
             $this->addMediaLibrary($setup);
             $this->addAdvertisement($setup);
         }
 
-        if (version_compare($context->getVersion(), '0.3.6', '<')) {
-            $this->modifyOutletColumn($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.3.7', '<')) {
-            $this->addAllowOutOfStockFieldToOutlet($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.3.8', '<')) {
-            $this->allowAddressURLLogoReceipt($setup);
-            $this->modifyColumnFooterReceipt($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.3.9', '<')) {
-            $this->addLocationOutlet($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.4.0', '<')) {
-            $this->modifyColumnCashierIdOutlet($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.4.1', '<')) {
-            $this->addCustomTaxColumnsToReceipt($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.4.2', '<')) {
-            $this->addSettingForA4Receipt($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.4.3', '<')) {
-            $this->addTemplateTaxLabelSetting($setup);
-        }
-
         if (version_compare($context->getVersion(), '0.4.4', '<')) {
             $this->addTokenManageTable($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.4.5', '<')) {
-            $this->addDefaultGuestCustomerToOutlet($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.4.6', '<')) {
-            $this->addLanguageSettingToReceipt($setup);
-        }
-
-        if (version_compare($context->getVersion(), '0.4.7', '<')) {
-            $this->modifyColumnReceiptOrderInfo($setup);
         }
     }
 
     /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
+     * @param SchemaSetupInterface $setup
+     * @param OutputInterface      $output
+     *
+     * @throws \Zend_Db_Exception
      */
-    protected function addCategoryOutletTable(SchemaSetupInterface $setup)
+    public function execute(SchemaSetupInterface $setup, OutputInterface $output)
     {
-        $setup->startSetup();
-
-        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sm_xretail_outlet'), 'category_id')) {
-            $setup->getConnection()->addColumn(
-                $setup->getTable('sm_xretail_outlet'),
-                'category_id',
-                [
-                    'type'    => Table::TYPE_INTEGER,
-                    'comment' => 'category id',
-                ]
-            );
-        }
-
-        $setup->endSetup();
+        $output->writeln('  |__ Add outlet table');
+        $this->addOutletTable($setup);
+        $output->writeln('  |__ Add register table');
+        $this->addRegister($setup);
+        $output->writeln('  |__ Add user order counter table');
+        $this->addUserOrderCounterTable($setup);
+        $output->writeln('  |__ Add receipt table');
+        $this->addReceiptTable($setup);
+        $this->dummyReceipt($setup);
+        $output->writeln('  |__ Add role table');
+        $this->createRoleTable($setup);
+        $output->writeln('  |__ Add permission table');
+        $this->createPermissionTable($setup);
+        $this->definePermission($setup);
+        $output->writeln('  |__ Add media library table');
+        $this->addMediaLibrary($setup);
+        $output->writeln('  |__ Add advertisement table');
+        $this->addAdvertisement($setup);
+        $output->writeln('  |__ Add token management table');
+        $this->addTokenManageTable($setup);
     }
 
     /**
@@ -181,9 +121,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
             'Demo Title'
         )->addColumn(
             'warehouse_id',
-            Table::TYPE_INTEGER,
-            null,
-            ['nullable' => true, 'unsigned' => true,],
+            Table::TYPE_TEXT,
+            255000,
+            ['nullable' => false, 'default' => ''],
             'WareHouse ID'
         )->addColumn(
             'store_id',
@@ -194,7 +134,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
         )->addColumn(
             'cashier_ids',
             Table::TYPE_TEXT,
-            255,
+            255000,
             ['nullable' => false,],
             'Cashier Ids'
         )->addColumn(
@@ -232,7 +172,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
             Table::TYPE_TEXT,
             10,
             ['nullable' => false,],
-            'Region Id'
+            'Country Id'
         )->addColumn(
             'region_id',
             Table::TYPE_TEXT,
@@ -269,6 +209,60 @@ class UpgradeSchema implements UpgradeSchemaInterface
             null,
             ['nullable' => false, 'default' => '1',],
             'Is Active'
+        )->addColumn(
+            'category_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['nullable' => true],
+            'Category ID'
+        )->addColumn(
+            'place_id',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false, 'default' => ''],
+            'Place ID Google Map'
+        )->addColumn(
+            'url',
+            Table::TYPE_TEXT,
+            25500,
+            ['nullable' => false, 'default' => ''],
+            'URL Google Map'
+        )->addColumn(
+            'lat',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false, 'default' => ''],
+            'Latitude Google Map'
+        )->addColumn(
+            'lng',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false, 'default' => ''],
+            'Longitude Google Map'
+        )->addColumn(
+            'location_id',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false, 'default' => ''],
+            'Location Id'
+        )->addColumn(
+            'allow_click_and_collect',
+            Table::TYPE_SMALLINT,
+            1,
+            ['nullable' => false, 'default' => '1'],
+            'Allow click and collect'
+        )->addColumn(
+            'allow_out_of_stock',
+            Table::TYPE_SMALLINT,
+            1,
+            ['nullable' => false, 'default' => '1'],
+            'Allow placing order with out of stock products'
+        )->addColumn(
+            'default_guest_customer_email',
+            Table::TYPE_TEXT,
+            50,
+            ['nullable' => false, 'default' => \SM\Customer\Helper\Data::DEFAULT_CUSTOMER_RETAIL_EMAIL],
+            'Default guest customer email'
         );
         $setup->getConnection()->createTable($table);
         $setup->endSetup();
@@ -455,7 +449,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
         )->addColumn(
             'header',
             Table::TYPE_TEXT,
-            255,
+            255000,
             ['nullable' => false,],
             'Header'
         )->addColumn(
@@ -529,7 +523,133 @@ class UpgradeSchema implements UpgradeSchemaInterface
             Table::TYPE_SMALLINT,
             null,
             ['nullable' => false,],
-            'default receipt'
+            'Default receipt'
+        )->addColumn(
+            'day_of_week',
+            Table::TYPE_TEXT,
+            128,
+            ['nullable' => false, 'default' => 'dddd'],
+            'Day of Week'
+        )->addColumn(
+            'day_of_month',
+            Table::TYPE_TEXT,
+            128,
+            ['nullable' => false, 'default' => 'Do'],
+            'Day of Month'
+        )->addColumn(
+            'month',
+            Table::TYPE_TEXT,
+            128,
+            ['nullable' => false, 'default' => 'MMM'],
+            'Month'
+        )->addColumn(
+            'year',
+            Table::TYPE_TEXT,
+            128,
+            ['nullable' => false, 'default' => 'YYYY'],
+            'Year'
+        )->addColumn(
+            'time',
+            Table::TYPE_TEXT,
+            128,
+            ['nullable' => false, 'default' => 'h:mm a'],
+            'Time'
+        )->addColumn(
+            'insert_header_logo',
+            Table::TYPE_TEXT,
+            255000,
+            ['nullable' => false, 'default' => 'upload'],
+            'Insert Header Logo'
+        )->addColumn(
+            'insert_footer_logo',
+            Table::TYPE_TEXT,
+            255000,
+            ['nullable' => false, 'default' => 'upload'],
+            'Insert Footer Logo'
+        )->addColumn(
+            'display_custom_tax',
+            Table::TYPE_INTEGER,
+            3,
+            ['nullable' => true, 'default' => 0],
+            'Is Display Custom Tax'
+        )->addColumn(
+            'custom_tax_multiplier',
+            Table::TYPE_DECIMAL,
+            '12,9',
+            ['nullable' => true, 'default' => 0],
+            'Custom Tax Multiplier'
+        )->addColumn(
+            'paper_size',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false,],
+            'Paper Size'
+        )->addColumn(
+            'style_customer_info',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false,],
+            'Style For Customer Info'
+        )->addColumn(
+            'store_info',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false,],
+            'Store Info'
+        )->addColumn(
+            'store_phone',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false,],
+            'Store Phone'
+        )->addColumn(
+            'store_website',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false,],
+            'Store Website'
+        )->addColumn(
+            'enable_terms_and_conditions',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false,],
+            'Terms and Conditions of Sale'
+        )->addColumn(
+            'terms_and_conditions',
+            Table::TYPE_TEXT,
+            255000,
+            ['nullable' => false,],
+            'Terms and Conditions Content'
+        )->addColumn(
+            'enable_customer_signature',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false,],
+            'Customer Signature'
+        )->addColumn(
+            'custom_tax_label',
+            Table::TYPE_TEXT,
+            20,
+            ['nullable' => true, 'default' => 'Tax'],
+            'Custom Tax Label'
+        )->addColumn(
+            'sm_xretail_receipt',
+            Table::TYPE_INTEGER,
+            3,
+            ['nullable' => true, 'default' => 0],
+            'Display Two Languages'
+        )->addColumn(
+            'second_language',
+            Table::TYPE_TEXT,
+            3,
+            ['nullable' => true, 'default' => 'en'],
+            'Second Language'
+        )->addColumn(
+            'order_info',
+            Table::TYPE_TEXT,
+            null,
+            ['nullable' => false,],
+            'Order Info'
         );
         $setup->getConnection()->createTable($table);
         $setup->endSetup();
@@ -751,217 +871,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
     }
 
     /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
-     */
-    protected function modifyColumnHeaderReceipt(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-
-        $receiptTable = $setup->getTable('sm_xretail_receipt');
-        $setup->startSetup();
-
-        $setup->getConnection()->changeColumn(
-            $setup->getTable($receiptTable),
-            'header',
-            'header',
-            [
-                'type'   => Table::TYPE_TEXT,
-                'length' => 255000,
-                ['nullable' => false,],
-                'Header',
-            ]
-        );
-
-        $setup->endSetup();
-    }
-
-    /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
-     */
-    protected function addNewColumnMapForOutlet(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable('sm_xretail_outlet'),
-            'place_id',
-            [
-                'type'     => Table::TYPE_TEXT,
-                'length'   => 25500,
-                'nullable' => false,
-                'comment'  => 'Place ID Google Map',
-            ]
-        );
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable('sm_xretail_outlet'),
-            'url',
-            [
-                'type'     => Table::TYPE_TEXT,
-                'length'   => 25500,
-                'nullable' => false,
-                'comment'  => 'URL Google Map',
-            ]
-        );
-
-        $setup->endSetup();
-    }
-
-    /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
-     */
-    protected function addNewColumnCustomDateTimeReceipt(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable('sm_xretail_receipt'),
-            'day_of_week',
-            [
-                'type'     => Table::TYPE_TEXT,
-                'length'   => 25500,
-                'nullable' => false,
-                'comment'  => 'Day of Week',
-            ]
-        );
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable('sm_xretail_receipt'),
-            'day_of_month',
-            [
-                'type'     => Table::TYPE_TEXT,
-                'length'   => 25500,
-                'nullable' => false,
-                'comment'  => 'Day of Month',
-            ]
-        );
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable('sm_xretail_receipt'),
-            'month',
-            [
-                'type'     => Table::TYPE_TEXT,
-                'length'   => 25500,
-                'nullable' => false,
-                'comment'  => 'Month',
-            ]
-        );
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable('sm_xretail_receipt'),
-            'year',
-            [
-                'type'     => Table::TYPE_TEXT,
-                'length'   => 25500,
-                'nullable' => false,
-                'comment'  => 'Year',
-            ]
-        );
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable('sm_xretail_receipt'),
-            'time',
-            [
-                'type'     => Table::TYPE_TEXT,
-                'length'   => 25500,
-                'nullable' => false,
-                'comment'  => 'Time',
-            ]
-        );
-
-        $setup->endSetup();
-    }
-
-    /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
-     */
-    protected function updateDefaultDateTimeReceipt(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-
-        $setup->getConnection()->update(
-            $setup->getTable('sm_xretail_receipt'),
-            [
-                'day_of_week'  => 'dddd',
-                'day_of_month' => 'Do',
-                'month'        => 'MMM',
-                'year'         => 'YYYY',
-                'time'         => 'h:mm a',
-            ],
-            ['day_of_week = ?' => null]
-        );
-
-        $setup->endSetup();
-    }
-
-    /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
-     */
-    protected function addMapInfoOutlet(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable('sm_xretail_outlet'),
-            'lat',
-            [
-                'type'     => Table::TYPE_TEXT,
-                'length'   => 255000,
-                'nullable' => false,
-                'comment'  => 'Latitude Google Map',
-            ]
-        );
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable('sm_xretail_outlet'),
-            'lng',
-            [
-                'type'     => Table::TYPE_TEXT,
-                'length'   => 255000,
-                'nullable' => false,
-                'comment'  => 'Longitude Google Map',
-            ]
-        );
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable('sm_xretail_outlet'),
-            'allow_click_and_collect',
-            [
-                'type'     => Table::TYPE_SMALLINT,
-                'length'   => 1,
-                'nullable' => false,
-                'default'  => '1',
-                'comment'  => 'Allow click and collect',
-            ]
-        );
-
-        $setup->endSetup();
-    }
-
-    /**
-     * @param SchemaSetupInterface $setup
-     */
-    protected function modifyColumnWarehouseOutlet(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-
-        $outletTable = $setup->getTable('sm_xretail_outlet');
-        $setup->getConnection()->changeColumn(
-            $setup->getTable($outletTable),
-            'warehouse_id',
-            'warehouse_id',
-            [
-                'type'   => Table::TYPE_TEXT,
-                'length' => 255000,
-                ['nullable' => false],
-                'Warehouse ID',
-            ]
-        );
-
-        $setup->endSetup();
-    }
-
-    /**
      * @param SchemaSetupInterface $setup
      *
      * @throws \Zend_Db_Exception
@@ -1108,344 +1017,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
     }
 
     /**
-     * @param SchemaSetupInterface $setup
-     */
-    protected function modifyOutletColumn(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-
-        $setup
-            ->getConnection()
-            ->modifyColumn(
-                $setup->getTable('sm_xretail_outlet'),
-                'lat',
-                [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255000,
-                    'nullable' => false,
-                    'comment'  => 'Latitude Google Map',
-                ]
-            );
-
-        $setup
-            ->getConnection()
-            ->modifyColumn(
-                $setup->getTable('sm_xretail_outlet'),
-                'lng',
-                [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255000,
-                    'nullable' => false,
-                    'comment'  => 'Longitude Google Map',
-                ]
-            );
-
-        $setup->endSetup();
-    }
-
-    /**
-     * @param SchemaSetupInterface $setup
-     */
-    protected function addAllowOutOfStockFieldToOutlet(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-        $tableName = $setup->getTable('sm_xretail_outlet');
-        $setup->getConnection()
-            ->addColumn(
-                $tableName,
-                'allow_out_of_stock',
-                [
-                    'type'     => Table::TYPE_SMALLINT,
-                    'length'   => 1,
-                    'nullable' => false,
-                    'default'  => 1,
-                    'comment'  => 'Allow placing order with out of stock products',
-                ]
-            );
-        $setup->endSetup();
-    }
-
-    /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
-     */
-    protected function allowAddressURLLogoReceipt(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-
-        $setup
-            ->getConnection()
-            ->addColumn(
-                $setup->getTable('sm_xretail_receipt'),
-                'insert_header_logo',
-                [
-                    'type'    => Table::TYPE_TEXT,
-                    'length'  => 255,
-                    ['nullable' => false, 'default' => 'upload'],
-                    'comment' => 'Insert Header Logo',
-                ]
-            );
-
-        $setup
-            ->getConnection()
-            ->addColumn(
-                $setup->getTable('sm_xretail_receipt'),
-                'insert_footer_logo',
-                [
-                    'type'    => Table::TYPE_TEXT,
-                    'length'  => 255,
-                    ['nullable' => false, 'default' => 'upload'],
-                    'comment' => 'Insert Footer Logo',
-                ]
-            );
-
-        $setup->endSetup();
-    }
-
-    /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
-     */
-    protected function modifyColumnFooterReceipt(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-        $receiptTable = $setup->getTable('sm_xretail_receipt');
-
-        $setup->getConnection()->modifyColumn(
-            $setup->getTable($receiptTable),
-            'footer',
-            [
-                'type'   => Table::TYPE_TEXT,
-                'length' => 255000,
-                ['nullable' => false,],
-                'Footer',
-            ]
-        );
-
-        $setup->endSetup();
-    }
-
-    /**
-     * @param SchemaSetupInterface $setup
-     */
-    protected function addLocationOutlet(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-        $tableName = $setup->getTable('sm_xretail_outlet');
-        $setup->getConnection()
-            ->addColumn(
-                $tableName,
-                'location_id',
-                [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255,
-                    'nullable' => false,
-                    'comment'  => 'Location Id',
-                ]
-            );
-        $setup->endSetup();
-    }
-
-    /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
-     */
-    protected function modifyColumnCashierIdOutlet(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-        $outletTable = $setup->getTable('sm_xretail_outlet');
-
-        $setup->getConnection()->modifyColumn(
-            $setup->getTable($outletTable),
-            'cashier_ids',
-            [
-                'type'   => Table::TYPE_TEXT,
-                'length' => 255000,
-                ['nullable' => false],
-                'Cashier Ids',
-            ]
-        );
-
-        $setup->endSetup();
-    }
-
-    /**
-     * @param SchemaSetupInterface $setup
-     */
-    protected function addCustomTaxColumnsToReceipt(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-
-        $receiptTable = $setup->getTable('sm_xretail_receipt');
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable($receiptTable),
-            'display_custom_tax',
-            [
-                'type'     => Table::TYPE_INTEGER,
-                'length'   => 3,
-                'nullable' => true,
-                'default'  => 0,
-                'comment'  => 'Is Display Custom Tax',
-            ]
-        );
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable($receiptTable),
-            'custom_tax_multiplier',
-            [
-                'type'     => Table::TYPE_DECIMAL,
-                'length'   => '12,9',
-                'nullable' => true,
-                'default'  => 0,
-                'comment'  => 'Custom Tax Multiplier',
-            ]
-        );
-
-        $setup->endSetup();
-    }
-
-    /**
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
-     */
-    protected function addSettingForA4Receipt(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-        $tableName = $setup->getTable('sm_xretail_receipt');
-
-        $setup->getConnection()
-            ->addColumn(
-                $tableName,
-                'paper_size',
-                [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255,
-                    'nullable' => false,
-                    'comment'  => 'Paper Size',
-                ]
-            );
-
-        $setup->getConnection()
-            ->addColumn(
-                $tableName,
-                'style_customer_info',
-                [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255,
-                    'nullable' => false,
-                    'comment'  => 'Style For Customer Info',
-                ]
-            );
-
-        $setup->getConnection()
-            ->addColumn(
-                $tableName,
-                'store_info',
-                [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255,
-                    'nullable' => false,
-                    'comment'  => 'Store Info',
-                ]
-            );
-
-        $setup->getConnection()
-            ->addColumn(
-                $tableName,
-                'store_phone',
-                [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255,
-                    'nullable' => false,
-                    'comment'  => 'Store Phone',
-                ]
-            );
-
-        $setup->getConnection()
-            ->addColumn(
-                $tableName,
-                'store_website',
-                [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255,
-                    'nullable' => false,
-                    'comment'  => 'Store Website',
-                ]
-            );
-
-        $setup->getConnection()
-            ->addColumn(
-                $tableName,
-                'store_email',
-                [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255,
-                    'nullable' => false,
-                    'comment'  => 'Store Email',
-                ]
-            );
-
-        $setup->getConnection()
-            ->addColumn(
-                $tableName,
-                'enable_terms_and_conditions',
-                [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255,
-                    'nullable' => false,
-                    'comment'  => 'Terms and Conditions of Sale',
-                ]
-            );
-
-        $setup->getConnection()
-            ->addColumn(
-                $tableName,
-                'terms_and_conditions',
-                [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255000,
-                    'nullable' => false,
-                    'comment'  => 'Terms and Conditions Content',
-                ]
-            );
-
-        $setup->getConnection()
-            ->addColumn(
-                $tableName,
-                'enable_customer_signature',
-                [
-                    'type'     => Table::TYPE_TEXT,
-                    'length'   => 255,
-                    'nullable' => false,
-                    'comment'  => 'Customer Signature',
-                ]
-            );
-
-        $setup->endSetup();
-    }
-
-    /**
-     * @param SchemaSetupInterface $setup
-     */
-    protected function addTemplateTaxLabelSetting(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-
-        $receiptTable = $setup->getTable('sm_xretail_receipt');
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable($receiptTable),
-            'custom_tax_label',
-            [
-                'type'     => Table::TYPE_TEXT,
-                'length'   => 20,
-                'nullable' => true,
-                'default'  => 'Tax',
-                'comment'  => 'Custom Tax Label',
-            ]
-        );
-
-        $setup->endSetup();
-    }
-
-    /**
      * @param \Magento\Framework\Setup\SchemaSetupInterface $setup
      *
      * @throws \Zend_Db_Exception
@@ -1498,83 +1069,4 @@ class UpgradeSchema implements UpgradeSchemaInterface
         $setup->endSetup();
     }
 
-    /**
-     * @param SchemaSetupInterface $setup
-     */
-    protected function addDefaultGuestCustomerToOutlet(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-        $tableName = $setup->getTable('sm_xretail_outlet');
-
-        $setup->getConnection()->addColumn(
-            $tableName,
-            'default_guest_customer_email',
-            [
-                'type'     => Table::TYPE_TEXT,
-                'length'   => 50,
-                'nullable' => false,
-                'default'  => \SM\Customer\Helper\Data::DEFAULT_CUSTOMER_RETAIL_EMAIL,
-                'comment'  => 'Location Id',
-                'after'    => 'enable_guest_checkout',
-            ]
-        );
-        $setup->endSetup();
-    }
-
-    /**
-     * @param SchemaSetupInterface $setup
-     */
-    protected function addLanguageSettingToReceipt(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-
-        $receiptTable = $setup->getTable('sm_xretail_receipt');
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable($receiptTable),
-            'display_two_languages',
-            [
-                'type'     => Table::TYPE_INTEGER,
-                'length'   => 3,
-                'nullable' => true,
-                'default'  => 0,
-                'comment'  => 'Display Two Languages',
-            ]
-        );
-
-        $setup->getConnection()->addColumn(
-            $setup->getTable($receiptTable),
-            'second_language',
-            [
-                'type'     => Table::TYPE_TEXT,
-                'length'   => 3,
-                'nullable' => true,
-                'default'  => 'en',
-                'comment'  => 'Second Language',
-            ]
-        );
-
-        $setup->endSetup();
-    }
-
-    /**
-     * @param SchemaSetupInterface $setup
-     */
-    protected function modifyColumnReceiptOrderInfo(SchemaSetupInterface $setup)
-    {
-        $setup->startSetup();
-        $outletTable = $setup->getTable('sm_xretail_receipt');
-
-        $setup->getConnection()->modifyColumn(
-            $setup->getTable($outletTable),
-            'order_info',
-            [
-                'type' => Table::TYPE_TEXT,
-                ['nullable' => false],
-                'Order Info',
-            ]
-        );
-
-        $setup->endSetup();
-    }
 }
