@@ -558,13 +558,13 @@ class UpgradeSchema implements UpgradeSchemaInterface
             'insert_header_logo',
             Table::TYPE_TEXT,
             255000,
-            ['nullable' => false, 'default' => 'upload'],
+            ['nullable' => false],
             'Insert Header Logo'
         )->addColumn(
             'insert_footer_logo',
             Table::TYPE_TEXT,
             255000,
-            ['nullable' => false, 'default' => 'upload'],
+            ['nullable' => false],
             'Insert Footer Logo'
         )->addColumn(
             'display_custom_tax',
