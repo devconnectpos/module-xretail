@@ -664,6 +664,11 @@
                     <service>SM\Integrate\Model\GCIntegrateManagement</service>
                     <function>getAwGiftCardCodePools</function>
                 </aw-giftcard-codepool>
+                <amasty-giftcard-codepool>
+                    <method>Get</method>
+                    <service>SM\Integrate\Model\GCIntegrateManagement</service>
+                    <function>getAmastyGiftCardCodePools</function>
+                </amasty-giftcard-codepool>
                 <token>
                     <method>Post</method>
                     <service>SM\XRetail\Repositories\AccessTokenManagement</service>
