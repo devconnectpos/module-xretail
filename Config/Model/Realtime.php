@@ -23,6 +23,10 @@ class Realtime implements ArrayInterface
                 'label' => __('Cronjob'),
                 'value' => 'cronjob',
             ],
+            [
+                'label' => __('Manual'),
+                'value' => 'manual',
+            ],
         ];
         return $options;
     }
