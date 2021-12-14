@@ -27,6 +27,7 @@
                 <field id="sync_realtime" translate="label comment" sortOrder="20" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Sync Realtime</label>
                     <source_model>SM\XRetail\Config\Model\Realtime</source_model>
+                    <comment>If you use the 'manual' mode, you need to sync products manually using product grid mass action. Other entities such as order, customer, etc. will be synced similar to the 'immediately' mode</comment>
                 </field>
                 <field id="realtime_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Realtime URL</label>
