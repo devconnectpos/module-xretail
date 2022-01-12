@@ -733,6 +733,7 @@
                 <integrate_freegift>none</integrate_freegift>
                 <allow_pending_order>0</allow_pending_order>
                 <enable_secure_request>0</enable_secure_request>
+                <block_customer_unsubscribe>0</block_customer_unsubscribe>
             </pos>
         </xretail>
         <xpos>

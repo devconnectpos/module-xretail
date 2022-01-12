@@ -71,6 +71,11 @@
                     <label>Enable Secure Request</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="block_customer_unsubscribe" translate="label" type="select" sortOrder="0" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Block customer from unsubscribing newsletter on POS</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>When this setting is on, unsubscribing customer from newsletter is blocked on ConnectPOS</comment>
+                </field>
             </group>
         </section>
     </system>

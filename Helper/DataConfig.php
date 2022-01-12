@@ -17,10 +17,10 @@ use Magento\Framework\App\Helper\AbstractHelper;
  */
 class DataConfig extends AbstractHelper
 {
-    const PAGE_SIZE_LOAD_PRODUCT        = 100;
+    const PAGE_SIZE_LOAD_PRODUCT = 100;
     const PAGE_SIZE_LOAD_PRODUCT_CACHED = 5000;
-    const PAGE_SIZE_LOAD_CUSTOMER       = 200;
-    const PAGE_SIZE_LOAD_DATA           = 200;
+    const PAGE_SIZE_LOAD_CUSTOMER = 200;
+    const PAGE_SIZE_LOAD_DATA = 200;
 
     /**
      * @return bool
@@ -68,5 +68,13 @@ class DataConfig extends AbstractHelper
     public function isIntegrate()
     {
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBlockingCustomerFromUnsubscribe()
+    {
+        return $this->scopeConfig->getValue('xretail/pos/block_customer_unsubscribe') == 1;
     }
 }
