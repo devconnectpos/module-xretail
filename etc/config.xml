@@ -297,6 +297,16 @@
                     <service>SM\Payment\Repositories\PaymentManagement</service>
                     <function>savePayment</function>
                 </payment>
+                <payment>
+                    <method>Delete</method>
+                    <service>SM\Payment\Repositories\PaymentManagement</service>
+                    <function>deletePayments</function>
+                </payment>
+                <duplicate-payments>
+                    <method>Delete</method>
+                    <service>SM\Payment\Repositories\PaymentManagement</service>
+                    <function>deleteDuplicatePayments</function>
+                </duplicate-payments>
 
                 <!--Receipt-->
                 <receipts>
