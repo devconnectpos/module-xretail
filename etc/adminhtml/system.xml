@@ -2,11 +2,11 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <tab id="xretail" translate="label" sortOrder="10">
-            <label>CONNECTPOS</label>
+            <label>CONNECTPOS (LEGACY)</label>
         </tab>
         <section id="xpos" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
             <class>separator-top</class>
-            <label>ConnectPOS</label>
+            <label>ConnectPOS (Legacy)</label>
             <tab>xretail</tab>
             <resource>SM_XRetail::pos_configuration</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">

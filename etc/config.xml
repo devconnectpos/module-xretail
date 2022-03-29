@@ -86,6 +86,11 @@
                     <service>SM\Customer\Repositories\CustomerManagement</service>
                     <function>createAddress</function>
                 </customer-address>
+                <mass-customer-address>
+                    <method>Put</method>
+                    <service>SM\Customer\Repositories\CustomerManagement</service>
+                    <function>bulkAddressSave</function>
+                </mass-customer-address>
                 <customer-group>
                     <method>Get</method>
                     <service>SM\Customer\Repositories\CustomerManagement</service>
