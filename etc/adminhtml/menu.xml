@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../Backend/etc/menu.xsd">
     <menu>
-        <add id="SM_XRetail::cposmenu" title="ConnectPOS" module="SM_XRetail" sortOrder="70" resource="SM_XRetail::cposmenu" />
+<!--        <add id="SM_XRetail::cposmenu" title="ConnectPOS" module="SM_XRetail" sortOrder="70" resource="SM_XRetail::cposmenu" />-->
 
-        <add id="SM_XRetail::cpos" title="ConnectPOS" module="SM_XRetail" parent="SM_XRetail::cposmenu" sortOrder="1" resource="SM_XRetail::cpos"/>
-        <add id="SM_XRetail::configuration" title="Configuration" module="SM_XRetail" parent="SM_XRetail::cpos" action="xretail/configuration" sortOrder="1" resource="SM_XRetail::configuration"/>
+<!--        <add id="SM_XRetail::cpos" title="ConnectPOS" module="SM_XRetail" parent="SM_XRetail::cposmenu" sortOrder="1" resource="SM_XRetail::cpos"/>-->
+<!--        <add id="SM_XRetail::configuration" title="Configuration" module="SM_XRetail" parent="SM_XRetail::cpos" action="xretail/configuration" sortOrder="1" resource="SM_XRetail::configuration"/>-->
 
-        <add id="SM_XRetail::pwa" title="PWA" module="SM_XRetail" parent="SM_XRetail::cposmenu" sortOrder="1" resource="SM_XRetail::pwa"/>
-        <add id="SM_PWAKeyword::keywords" title="Manage Keywords" module="SM_PWAKeyword" parent="SM_XRetail::pwa" sortOrder="10" action="adminhtml/keyword" dependsOnModule="SM_PWAKeyword" resource="SM_PWAKeyword::keywords"/>
-        <add id="SM_PWABanner::banner" title="PWA Banner" module="SM_PWABanner" parent="SM_XRetail::pwa" action="adminhtml/pwabanner" sortOrder="30" dependsOnModule="SM_PWABanner" resource="SM_PWABanner::banner"/>
-        <add id="SM_PWAQrCode::qrcodes" title="Generate QR Codes" module="SM_PWAQrCode" sortOrder="10" parent="SM_XRetail::pwa" action="adminhtml/qrcode/new" dependsOnModule="SM_PWAQrCode" resource="SM_PWAQrCode::qrcodes"/>
+<!--        <add id="SM_XRetail::pwa" title="PWA" module="SM_XRetail" parent="SM_XRetail::cposmenu" sortOrder="1" resource="SM_XRetail::pwa"/>-->
+<!--        <add id="SM_PWAKeyword::keywords" title="Manage Keywords" module="SM_PWAKeyword" parent="SM_XRetail::pwa" sortOrder="10" action="adminhtml/keyword" dependsOnModule="SM_PWAKeyword" resource="SM_PWAKeyword::keywords"/>-->
+<!--        <add id="SM_PWABanner::banner" title="PWA Banner" module="SM_PWABanner" parent="SM_XRetail::pwa" action="adminhtml/pwabanner" sortOrder="30" dependsOnModule="SM_PWABanner" resource="SM_PWABanner::banner"/>-->
+<!--        <add id="SM_PWAQrCode::qrcodes" title="Generate QR Codes" module="SM_PWAQrCode" sortOrder="10" parent="SM_XRetail::pwa" action="adminhtml/qrcode/new" dependsOnModule="SM_PWAQrCode" resource="SM_PWAQrCode::qrcodes"/>-->
     </menu>
 </config>
