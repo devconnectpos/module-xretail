@@ -25,9 +25,9 @@
                     <label>Php Run time</label>
                 </field>
                 <field id="sync_realtime" translate="label comment" sortOrder="20" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Sync Realtime</label>
+                    <label>Real time synchronization mode</label>
                     <source_model>SM\XRetail\Config\Model\Realtime</source_model>
-                    <comment>If you use the 'manual' mode, you need to sync products manually using product grid mass action. Other entities such as order, customer, etc. will be synced similar to the 'immediately' mode</comment>
+                    <comment>If you use the 'manual' mode, you need to sync products manually using product grid mass action. Other entities such as order, customer, etc. will be synced similar to the 'immediately' mode. If you use the 'No product cache' mode, ConnectPOS will always get data directly from Magento, which is slower but real time update won't put pressure to database server resources and can avoid crashing. 'No product cache' mode is recommended when you encounter performance issues with database server.</comment>
                 </field>
                 <field id="realtime_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Realtime URL</label>

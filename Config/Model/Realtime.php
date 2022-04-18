@@ -27,6 +27,10 @@ class Realtime implements ArrayInterface
                 'label' => __('Manual'),
                 'value' => 'manual',
             ],
+            [
+                'label' => __('No product cache'),
+                'value' => 'no_product_cache',
+            ],
         ];
         return $options;
     }
