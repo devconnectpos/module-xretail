@@ -8,14 +8,34 @@
 
 namespace SM\XRetail\Observer;
 
+use Magento\Framework\App\Request\Http as Request;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Psr\Log\LoggerInterface;
 
 class ApiControllerBefore implements ObserverInterface
 {
+    /**
+     * @var JsonSerializer
+     */
+    protected $jsonSerializer;
 
-    public function __construct()
+    /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    public function __construct(JsonSerializer $jsonSerializer, Request $request, LoggerInterface $logger)
     {
+        $this->jsonSerializer = $jsonSerializer;
+        $this->request = $request;
+        $this->logger = $logger;
     }
 
     /**
@@ -32,10 +52,19 @@ class ApiControllerBefore implements ObserverInterface
     {
         /** @var \SM\XRetail\Controller\V1\Xretail $apiController */
         $apiController = $observer->getData('apiController');
+        $params = $this->request->getContent();
 
         // get data as json
-        if (!is_null($data = json_decode(file_get_contents('php://input'), true))) {
-            $apiController->getRequest()->setParams($data);
+        try {
+            $data = $this->jsonSerializer->unserialize($params);
+
+            if (!is_null($data)) {
+                $apiController->getRequest()->setParams($data);
+            }
+        } catch (\Exception $e) {
+            if ($this->request->isPost()) {
+                $this->logger->warning("[CPOS] No request body supplied to the POST request: {$e->getMessage()}");
+            }
         }
 
         $apiController->checkPath();
