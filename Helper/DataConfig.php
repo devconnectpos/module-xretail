@@ -77,4 +77,12 @@ class DataConfig extends AbstractHelper
     {
         return $this->scopeConfig->getValue('xretail/pos/block_customer_unsubscribe') == 1;
     }
+
+    /**
+     * @return bool
+     */
+    public function isRoundingOrderStoreCreditData()
+    {
+        return $this->scopeConfig->getValue('xretail/pos/round_order_store_credit_data') == 1;
+    }
 }
