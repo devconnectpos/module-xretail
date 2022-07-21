@@ -76,6 +76,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>When this setting is on, unsubscribing customer from newsletter is blocked on ConnectPOS</comment>
                 </field>
+                <field id="round_order_store_credit_data" translate="label" type="select" sortOrder="0" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Round order store credit data</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>When this setting is on, store credit amount data of order will be rounded when creating order</comment>
+                </field>
             </group>
         </section>
     </system>
