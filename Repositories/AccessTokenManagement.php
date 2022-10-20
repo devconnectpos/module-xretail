@@ -69,7 +69,7 @@ class AccessTokenManagement extends ServiceAbstract
     /**
      * @return int|mixed
      */
-    private final function getTimeExpireToken() {
+    private function getTimeExpireToken() {
         $config = $this->configLoader->getConfigByPath('xpos/secure', 'default', 0);
         return isset($config[AccessTokenManagement::XRETAIL_TOKEN_EXPIRE_AFTER]) ?
             $config[AccessTokenManagement::XRETAIL_TOKEN_EXPIRE_AFTER]['value'] : 60;

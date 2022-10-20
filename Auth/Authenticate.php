@@ -126,7 +126,7 @@ class Authenticate
      * @return mixed
      * @throws Exception
      */
-    private final function getLastTokenByUserId($userId)
+    private function getLastTokenByUserId($userId)
     {
         $token = $this->accessTokenManagement->getTokenCollectionByUserId($userId);
 
@@ -143,7 +143,7 @@ class Authenticate
      * @return bool
      * @throws Exception
      */
-    private final function isLastToken($token, $userId)
+    private function isLastToken($token, $userId)
     {
         return $token === $this->getLastTokenByUserId($userId);
     }
