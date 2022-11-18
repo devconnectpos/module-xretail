@@ -146,7 +146,7 @@ class AdvertisementManagement extends ServiceAbstract {
         $collection = $this->advertisementCollectionFactory->create();
 
         if ($searchCriteria->getData('ids')) {
-            $collection->addFieldToFilter('id', ['in' => explode(",", $searchCriteria->getData('ids'))]);
+            $collection->addFieldToFilter('id', ['in' => explode(",", (string)$searchCriteria->getData('ids'))]);
         }
 
         return $collection;

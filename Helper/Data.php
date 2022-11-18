@@ -65,7 +65,7 @@ class Data extends AbstractHelper
     /**
      * @var string
      */
-    public static $API_VERSION = '22.11.01';
+    public static $API_VERSION = '22.11.18';
 
 	/**
 	 * @var CollectionFactoryInterface
@@ -300,7 +300,7 @@ class Data extends AbstractHelper
     public static function generateCallTrace()
     {
         $e     = new \Exception();
-        $trace = explode("\n", $e->getTraceAsString());
+        $trace = explode("\n", (string)$e->getTraceAsString());
         // reverse array to make steps line up chronologically
         $trace = array_reverse($trace);
         array_shift($trace); // remove {main}

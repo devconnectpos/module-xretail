@@ -148,7 +148,7 @@ class MediaLibraryManagement extends ServiceAbstract {
         $collection = $this->mediaLibraryCollectionFactory->create();
 
         if ($searchCriteria->getData('ids')) {
-            $collection->addFieldToFilter('id', ['in' => explode(",", $searchCriteria->getData('ids'))]);
+            $collection->addFieldToFilter('id', ['in' => explode(",", (string)$searchCriteria->getData('ids'))]);
         }
 
         return $collection;
