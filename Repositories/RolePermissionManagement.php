@@ -169,7 +169,7 @@ class RolePermissionManagement extends ServiceAbstract
         /** @var \SM\XRetail\Model\ResourceModel\Permission\Collection $collection */
         $collection = $this->permissionCollectionFactory->create();
         if ($requestData->getData('entity_id')) {
-            $collection->addFieldToFilter('id', ['in' => explode(",", $requestData->getData('entity_id'))]);
+            $collection->addFieldToFilter('id', ['in' => explode(",", (string)$requestData->getData('entity_id'))]);
         }
         if ($requestData->getData('role_id')) {
             $collection->addFieldToFilter('role_id', $requestData->getData('role_id'));
@@ -229,7 +229,7 @@ class RolePermissionManagement extends ServiceAbstract
         /** @var \SM\XRetail\Model\ResourceModel\Role\Collection $collection */
         $collection = $this->roleCollection->create();
         if ($requestData->getData('entity_id')) {
-            $collection->addFieldToFilter('id', ['in' => explode(",", $requestData->getData('entity_id'))]);
+            $collection->addFieldToFilter('id', ['in' => explode(",", (string)$requestData->getData('entity_id'))]);
         }
 
         return $collection;

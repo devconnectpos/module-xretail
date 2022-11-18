@@ -81,7 +81,7 @@ class Xretail extends ApiAbstract
             $this->setOutput(
                 call_user_func_array(
                     [$this->getService(), $this->getFunction()],
-                    $this->getRequest()->getParams()
+                    []
                 )
             );
             // communicate with api after
@@ -90,7 +90,7 @@ class Xretail extends ApiAbstract
             // output data
             return $this->jsonOutput();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->outputError($e->getMessage(), $this->getStatusCode());
         }
     }
