@@ -4,6 +4,7 @@ namespace SM\XRetail\Controller\V1;
 
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\PageCache\Model\Config;
 use SM\XRetail\Auth\Authenticate;
 use SM\XRetail\Controller\Contract\ApiAbstract;
@@ -33,10 +34,6 @@ class Xretail extends ApiAbstract
      * @var RetailHelper
      */
     protected $retailHelper;
-    /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
-    private $objectManager;
 
     /**
      * Xretail constructor.
@@ -55,9 +52,10 @@ class Xretail extends ApiAbstract
         Config $config,
         Authenticate $authenticate,
         RetailHelper $retailHelper,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        JsonSerializer $jsonSerializer
     ) {
-        parent::__construct($context, $scopeConfig, $configuration, $config, $objectManager);
+        parent::__construct($context, $scopeConfig, $configuration, $config, $objectManager, $jsonSerializer);
         $this->authenticate = $authenticate;
         $this->retailHelper = $retailHelper;
     }
