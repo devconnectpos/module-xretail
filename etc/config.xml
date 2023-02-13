@@ -752,6 +752,9 @@
             </pos>
         </xretail>
         <xpos>
+            <advance>
+                <sync_realtime>no_product_cache</sync_realtime>
+            </advance>
             <order_settings>
                 <enable_prefix>0</enable_prefix>
                 <order_prefix>M-</order_prefix>
